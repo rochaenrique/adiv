@@ -1,0 +1,28 @@
+# ADIV - VIDA al reves
+
+## Estagios:
+- De vuelta a la vida
+- Abuelito
+- Hombre de familia
+- Universidad
+- Instituto
+- Chiquitin
+- Bebe
+- Bienvenido a la vida
+
+## Ideas:
+- Game levels with mario-bros style game play.
+- When you 'die' death takes you back to the beggining.
+- ECS maybe?
+
+## TODO:
+[] General basic physics with jumping and crouching and possibly actions
+[] Player sprites with switching and animations
+[] Map loader with textures
+[] Level systems with possible 'shorts' when switching
+[] Basic UI and in game interactive elements
+[] NPC's with scripting
+...
+[] Loading screen
+
+
