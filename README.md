@@ -25,4 +25,6 @@
 ...
 [] Loading screen
 
-
+# References:
+- ECS System https://austinmorlan.com/posts/entity_component_system/
+- Old Man Sprite https://www.artstation.com/artwork/d0DxwK
