@@ -14,19 +14,15 @@ public:
   ComponentID GetID();
   
   template<typename T>
-  void Add(Entity e, T c) { GetArray<T>()->Insert(e, c); }
+  void Add(Entity, T);
 
   template<typename T>
-  void Remove(Entity e) { GetArray<T>()->Remove(e); }
+  void Remove(Entity);
   
   template<typename T>
-  void Get(Entity e) { return GetArray<T>()->Get(e); }
+  T& Get(Entity);
 
-  void Destroy(Entity e)
-  {
-	for (auto const& [type, arr] : m_ComponentArrays)
-	  arr->Destroy(e);
-  }
+  void Destroy(Entity);
 
 private:
   std::unordered_map<TypeID, ComponentID> m_ComponentIDs {};

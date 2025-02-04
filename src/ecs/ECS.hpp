@@ -1,8 +1,8 @@
 #pragma once
-
 #include <bitset>
 #include <cstdint>
 #include <set>
+#include <memory>
 
 #define MAX_ENTITIES   1000
 #define MAX_COMPONENTS 16
@@ -17,4 +17,6 @@ class System
 public:
   std::set<Entity> m_Entities;
 };
+
+
 

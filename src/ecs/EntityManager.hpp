@@ -1,6 +1,5 @@
 #pragma once
 #include "ECS.hpp"
-#include "ComponentManager.hpp"
 #include <stack>
 #include <array>
 

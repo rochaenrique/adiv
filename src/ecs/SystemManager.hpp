@@ -11,14 +11,10 @@ public:
 
   template<typename T>
   void SetSignature(Signature);
-
-  void Destroy(Entity e)
-  {
-	for (auto const& [type, sys] : m_Systems)
-	  sys->m_Entities.erase(e);
-  }
   
   void SignatureChanged(Entity, Signature);
+
+  void Destroy(Entity e);
 
 private:
   std::unordered_map<TypeID, Signature> m_Signatures {};

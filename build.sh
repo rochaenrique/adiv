@@ -1,5 +1,6 @@
-SRC_DIR="./src"
-VENDOR_DIR="./vendor"
+ADIV_DIR=~/dev/adiv
+SRC_DIR=./src
+VENDOR_DIR=./vendor
 FLAGS="-std=c++20 -g -ggdb -Wall -Wextra"
 
 get_sources () {
@@ -15,8 +16,10 @@ get_sources () {
 	done
 }
 
+echo Building from $PWD
+
 # Platform
-PLATFORM="linux"
+PLATFORM="linux_amd64"
 if [[ "$1" =~ -platform=[a-zA-Z][a-zA-Z]* ]]
 then
 	PLATFORM=$(echo $1 | cut -d'=' -f2)
@@ -33,20 +36,23 @@ fi
 
 # Souce files
 SOURCES=`get_sources $SRC_DIR`
-echo === Source Files === 
+echo ==== Source Files === 
 echo $SOURCES | tr ' ' '\n'
 echo === ===
 
 # Libs
 RAY_DIR="$VENDOR_DIR/raylib-5.5_$PLATFORM"
-LIBS="-L$RAY_DIR/lib -lraylib"
+LIB_DIRS="-L$RAY_DIR/lib"
+LIBS="-l:libraylib.a"
 if [ $PLATFORM = 'macos' ]
 then
-	LIBS="-Wl,-rpath,$RAY_DIR/lib/ $LIBS"
+	LIB_DIRS="-Wl,-rpath,$RAY_DIR/lib/ $LIB_DIRS"
+	LIBS="-lraylib"
 fi
 
-CMD="g++ $FLAGS $SOURCES -I$RAY_DIR/include/ -I$SRC_DIR  $LIBS -o adiv"
+CMD="g++ $FLAGS $SOURCES -I$RAY_DIR/include/ -I$SRC_DIR -I$SRC_DIR/ecs $LIB_DIRS $LIBS -o adiv"
 
 # Run comand
-echo Building with: $CMD
+echo Build command:
+echo $CMD
 eval $CMD

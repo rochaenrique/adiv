@@ -19,6 +19,30 @@ ComponentID ComponentManager::GetID()
 
   return m_ComponentIDs[type];
 }
+
+template<typename T>
+void ComponentManager::Add(Entity e, T c)
+{
+  GetArray<T>()->Insert(e, c);
+}
+
+template<typename T>
+void ComponentManager::Remove(Entity e)
+{
+  GetArray<T>()->Remove(e);
+}
+  
+template<typename T>
+T& ComponentManager::Get(Entity e)
+{
+  return GetArray<T>()->Get(e);
+}
+
+void ComponentManager::Destroy(Entity e)
+{
+  for (auto const& [type, arr] : m_ComponentArrays)
+	arr->Destroy(e);
+}
   
 template<typename T>
 std::shared_ptr<ComponentArray<T>> ComponentManager::GetArray()
