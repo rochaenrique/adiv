@@ -2,7 +2,7 @@
 #include <cassert>
 
 template<typename T>
-void ComponentManager::RegisterComponent()
+void ComponentManager::Register()
 {
   TypeID type = typeid(T).name();
   assert(m_ComponentIDs.find(type) == m_ComponentIDs.end() && "Component allready registered");
@@ -12,7 +12,7 @@ void ComponentManager::RegisterComponent()
 }
   
 template<typename T>
-ComponentID ComponentManager::GetComponentID()
+ComponentID ComponentManager::GetID()
 {
   TypeID type = typeid(T).name();
   assert(m_ComponentIDs.find(type) != m_ComponentIDs.end() && "Component not registered");
@@ -20,31 +20,6 @@ ComponentID ComponentManager::GetComponentID()
   return m_ComponentIDs[type];
 }
   
-template<typename T>
-void ComponentManager::AddComponent(Entity e, T c)
-{
-  ComponentManager::GetArray<T>()->Insert(e, c);
-}
-
-template<typename T>
-void ComponentManager::RemoveComponent(Entity e)
-{
-  ComponentManager::GetArray<T>()->Remove(e);
-}
-
-  
-template<typename T>
-void ComponentManager::GetComponent(Entity e)
-{
-  return ComponentManager::GetArray<T>()->Get(e);
-}
-
-void ComponentManager::Destroy(Entity e)
-{
-  for (auto const& [type, arr] : m_ComponentArrays)
-	arr->Destroy(e);
-}
-
 template<typename T>
 std::shared_ptr<ComponentArray<T>> ComponentManager::GetArray()
 {

@@ -7,7 +7,7 @@ EntityManager::EntityManager()
 	m_Available.push(e);
 }
 
-Entity EntityManager::CreateEntity()
+Entity EntityManager::Create()
 {
   assert(m_Alive < MAX_ENTITIES && "Too many alive entities"); 
 
@@ -17,7 +17,7 @@ Entity EntityManager::CreateEntity()
   return e;
 }
 
-void EntityManager::DestroyEntity(Entity e)
+void EntityManager::Destroy(Entity e)
 {
   assert(e < MAX_ENTITIES && "Entity not created by manager, out of range");
   m_Signatures[e].reset();

@@ -8,21 +8,25 @@ class ComponentManager
 {
 public:
   template<typename T>
-  void RegisterComponent();
+  void Register();
   
   template<typename T>
-  ComponentID GetComponentID();
+  ComponentID GetID();
   
   template<typename T>
-  void AddComponent(Entity, T);
+  void Add(Entity e, T c) { GetArray<T>()->Insert(e, c); }
 
   template<typename T>
-  void RemoveComponent(Entity);
+  void Remove(Entity e) { GetArray<T>()->Remove(e); }
   
   template<typename T>
-  void GetComponent(Entity);
+  void Get(Entity e) { return GetArray<T>()->Get(e); }
 
-  void Destroy(Entity);
+  void Destroy(Entity e)
+  {
+	for (auto const& [type, arr] : m_ComponentArrays)
+	  arr->Destroy(e);
+  }
 
 private:
   std::unordered_map<TypeID, ComponentID> m_ComponentIDs {};

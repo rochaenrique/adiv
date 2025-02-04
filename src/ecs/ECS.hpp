@@ -14,7 +14,7 @@ using TypeID      = const char *;
 
 class System
 {
-private:
+public:
   std::set<Entity> m_Entities;
 };
 

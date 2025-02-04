@@ -9,8 +9,8 @@ class EntityManager
 public:
   EntityManager();
 
-  Entity CreateEntity();
-  void DestroyEntity(Entity);
+  Entity Create();
+  void Destroy(Entity);
 
   void SetSignature(Entity, Signature);
   Signature GetSignature(Entity);
