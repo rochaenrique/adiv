@@ -16,6 +16,6 @@ public:
   void SignatureChanged(Entity, Signature);
 
 private:
-std:unordered_map<TypeID, Signature> m_Signatures {};
-std:unordered_map<TypeID, std::shared_ptr<System>> m_Systems {};
+  std::unordered_map<TypeID, Signature> m_Signatures {};
+  std::unordered_map<TypeID, std::shared_ptr<System>> m_Systems {};
 };
