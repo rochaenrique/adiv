@@ -1,23 +1,4 @@
-#include "SystemManager.hpp"
-#include <cassert>
-
-template<typename T>
-std::shared_ptr<T> SystemManager::Register()
-{
-  TypeID type = typeid(T).name();
-  assert(m_Systems.find(type) == m_Systems.end() && "Allready registered");
-  std::shared_ptr<T> system = std::make_shared<T>();
-  m_Systems.insert({ type, system });
-  return system;
-}
-
-template<typename T>
-void SystemManager::SetSignature(Signature s)
-{
-  TypeID type = typeid(T).name();
-  assert(m_Signatures.find(type) != m_Signatures.end() && "Used before register");
-  m_Signatures.insert({ type, s });
-}
+#include "SystemManager.h"
 
 void SystemManager::SignatureChanged(Entity e, Signature s)
 {

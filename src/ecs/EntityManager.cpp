@@ -1,4 +1,4 @@
-#include "EntityManager.hpp"
+#include "EntityManager.h"
 #include <cassert>
 
 EntityManager::EntityManager()

@@ -11,7 +11,7 @@ get_sources () {
 			get_sources $f
 		elif [[ $(basename $f) =~ ^[a-zA-Z_].*\.cpp$ ]]
 		then
-			echo $f
+			echo $f | cut -c3-
 		fi
 	done
 }
@@ -50,9 +50,11 @@ then
 	LIBS="-lraylib"
 fi
 
-CMD="g++ $FLAGS $SOURCES -I$RAY_DIR/include/ -I$SRC_DIR -I$SRC_DIR/ecs $LIB_DIRS $LIBS -o adiv"
-
 # Run comand
-echo Build command:
+
+CMD="g++ $FLAGS $SOURCES -I$RAY_DIR/include/ -I$SRC_DIR $LIB_DIRS $LIBS -o adiv"
+echo Compile command:
 echo $CMD
 eval $CMD
+
+

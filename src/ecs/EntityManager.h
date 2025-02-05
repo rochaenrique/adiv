@@ -1,5 +1,5 @@
 #pragma once
-#include "ECS.hpp"
+#include "ECS.h"
 #include <stack>
 #include <array>
 

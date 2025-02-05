@@ -1,18 +1,19 @@
 #include <iostream>
 #include <raylib.h>
 #include <vector>
-#include <ecs/Registry.hpp>
-#include "ecs/Components.hpp"
-#include "ecs/Systems.hpp"
-#include "ecs/ComponentManager.hpp"
-#include "ecs/SystemManager.hpp"
-#include "ecs/EntityManager.hpp"
+#include "ecs/Systems.h"
+#include "ecs/Registry.h"
+#include "ecs/Components.h"
+#include "ecs/SystemManager.h"
+#include "ecs/EntityManager.h"
+#include "ecs/ComponentManager.h"
 
 #define SCREEN_WIDTH  800.0f
 #define SCREEN_HEIGHT 600.0f
 
 float normalize(float v, float t, float n) {return v / t * n;}
 
+Registry registry;
 
 int main()
 {
@@ -24,21 +25,29 @@ int main()
   Rectangle source = { 0, 0, sprite_size, sprite_size };
   Rectangle dest = { SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f, sprite_size / 2.0f, sprite_size / 2.0f };
 
-  Registry registry;
   registry.Init();
   registry.RegisterComponent<Square>();
   registry.RegisterComponent<Gravity>();
   registry.RegisterComponent<RigidBody>();
   registry.RegisterComponent<Transform>();
+  
+  auto physicsSystem = registry.RegisterSystem<PhysicsSystem>();
+  { 
+	Signature sign;
+	sign.set(registry.GetComponentID<Square>());
+	sign.set(registry.GetComponentID<Gravity>());
+	sign.set(registry.GetComponentID<RigidBody>());
+	sign.set(registry.GetComponentID<Transform>());
+	registry.SetSystemSignature<PhysicsSystem>(sign);
+  }
 
-  auto physics = registry.RegisterSystem<PhysicsSystem>();
-
-  Signature sig;
-  sig.set(registry.GetComponentID<Square>());
-  sig.set(registry.GetComponentID<Gravity>());
-  sig.set(registry.GetComponentID<RigidBody>());
-  sig.set(registry.GetComponentID<Transform>());
-  registry.SetSystemSignature<PhysicsSystem>(sig);
+  auto renderSystem  = registry.RegisterSystem<RenderSystem>();
+  {
+	Signature sign;
+	sign.set(registry.GetComponentID<Square>());
+	sign.set(registry.GetComponentID<Transform>());
+	registry.SetSystemSignature<PhysicsSystem>(sign);
+  }
 
   std::vector<Entity> entities(MAX_ENTITIES);
 
@@ -70,15 +79,10 @@ int main()
   while (!WindowShouldClose()) {
 	dt = GetFrameTime();
 	ClearBackground(WHITE);
-	BeginDrawing();
-	DrawTexturePro(texture, source, dest, {0, 0}, 0, WHITE);
+	physicsSystem->Update(dt);
 
-	/*
-	for (Square& s : squares) {
-	  DrawRectangleV(s.position, {10, 10}, s.color);
-	  s.position.y++;
-	}
-	*/
+	BeginDrawing();
+	renderSystem->Update();
 	EndDrawing();
   }
 }
