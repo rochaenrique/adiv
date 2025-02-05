@@ -15,7 +15,7 @@
 - When you 'die' death takes you back to the beggining.
 
 ## TODO:
-[ ] ECS Implementation
+[x] ECS Implementation
 [ ] General basic physics with jumping and crouching and possibly actions
 [ ] Player sprites with switching and animations
 [ ] Map loader with textures
