@@ -16,14 +16,19 @@
 
 ## TODO:
 [x] ECS Implementation
-[ ] General basic physics with jumping and crouching and possibly actions
-[ ] Player sprites with switching and animations
+[ ] Physics Engine Implementation
+[ ] Rectangle Collider Detector Implementation
+[ ] General basic player movement
+[ ] Player sprite animations
 [ ] Map loader with textures
-[ ] Level systems with possible 'shorts' when switching
-[ ] Basic UI and in game interactive elements
+[ ] First level with obstacles
+[ ] Level reset when die
+[ ] Basic UI 
 [ ] NPC's with scripting
+[ ] Multiple levels with diferent sprites
+[ ] In game interactive elements
 ...
-[] Loading screen
+[ ] Loading screen
 
 # References:
 - ECS System https://austinmorlan.com/posts/entity_component_system/

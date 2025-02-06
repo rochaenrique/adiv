@@ -17,20 +17,17 @@ Registry registry;
 
 int main()
 {
-  std::cout << "Hello world\n";
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "ADIV");
   registry.Init();
 
   registry.RegisterComponent<adv::Player>();
   registry.RegisterComponent<adv::Sprite>();
-  registry.RegisterComponent<adv::Gravity>();
   registry.RegisterComponent<adv::RigidBody>();
   registry.RegisterComponent<adv::Transform>();
 
   auto physicsSystem = registry.RegisterSystem<PhysicsSystem>();
   { 
 	Signature sign;
-	sign.set(registry.GetComponentID<adv::Gravity>());
 	sign.set(registry.GetComponentID<adv::RigidBody>());
 	sign.set(registry.GetComponentID<adv::Transform>());
 	registry.SetSystemSignature<PhysicsSystem>(sign);
@@ -53,21 +50,19 @@ int main()
 	registry.SetSystemSignature<PlayerUpdateSystem>(sign);
   }
 
-
   auto oldman = std::make_shared<Texture2D>(LoadTexture("res/sprites/old_man.jpeg"));
   Entity player = registry.CreateEntity();
   {
 	float sprite_size = (float)oldman->width / 8.0f;
 	Rectangle source = { 0, 0, sprite_size, sprite_size };
-	registry.AddComponent(player, adv::Gravity{
-		.force = {0, 0}
-	  });
+	Vector2 pos = {SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f};
 	registry.AddComponent(player, adv::RigidBody{
-		.acceleration = {0, 0},
-		.velocity = {0, 0}
+		.force = {0, 0},
+		.velocity = {0, 0},
+		.mass = 1.0f
 	  });
 	registry.AddComponent(player, adv::Transform{
-		.translation = {SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f},
+		.translation = pos,
 		.scale = {sprite_size, sprite_size},
 		.rotation = {0, 0}
 	  });
@@ -83,6 +78,7 @@ int main()
   while (!WindowShouldClose()) {
 	dt = GetFrameTime();
 	ClearBackground(WHITE);
+	
 	physicsSystem->Update(dt);
 	playerUpdateSystem->Update(dt);
 	

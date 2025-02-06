@@ -5,8 +5,7 @@
 namespace adv
 {
   struct Player    {};
-  struct Gravity   { Vector2 force; };
-  struct RigidBody { Vector2 acceleration, velocity; };
+  struct RigidBody { Vector2 force, velocity; float mass; };
   struct Transform { Vector2 translation, scale, rotation; };
   struct Sprite
   {
