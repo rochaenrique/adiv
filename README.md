@@ -32,4 +32,5 @@
 
 # References:
 - ECS System https://austinmorlan.com/posts/entity_component_system/
+- Physics Engine https://winter.dev/articles/physics-engine
 - Old Man Sprite https://www.artstation.com/artwork/d0DxwK

@@ -1,8 +1,9 @@
 #include "Systems.h"
-#include "Registry.h"
-#include "Components.h"
 #include <raylib.h>
+#include <raymath.h>
 #include <iostream>
+#include "ecs/Registry.h"
+#include "ecs/components/Components.h"
 
 extern Registry registry;
 
@@ -13,19 +14,36 @@ void PhysicsSystem::Update(float dt)
 	adv::Transform& t = registry.GetComponent<adv::Transform>(e);
 
 	// apply force
-	// r.force.x += r.mass * acc;
-	// r.force.y += r.mass * acc;
-
+	// r.force += r.mass * acc;
+	
 	assert(r.mass != 0 && "Mass is 0");
-
-	r.velocity.x += r.force.x / r.mass * dt;
-	r.velocity.y += r.force.y / r.mass * dt;
-
-	t.translation.x += r.velocity.x * dt;
-	t.translation.y += r.velocity.y * dt;
+	r.velocity += r.force / r.mass * dt;
+	t.translation += r.velocity * dt;
 
 	// reset force
 	//	r.force = { 0, 0 };
+  }
+}
+
+void CollisionSystem::Update()
+{
+  for (const Entity& a : m_Entities) {
+	adv::Collider& A = registry.GetComponent<adv::Collider>(a);
+	adv::Transform& at = registry.GetComponent<adv::Transform>(a);
+	adv::UpdateCollider(A, at.translation);
+	
+	for (const Entity& b : m_Entities) {
+	  if (a == b) break;
+
+	  adv::Collider& B = registry.GetComponent<adv::Collider>(b);
+	  adv::Transform& bt = registry.GetComponent<adv::Transform>(b);
+	  adv::UpdateCollider(B, bt.translation);
+
+	  adv::CollisionPoints points = TestCollision(A, B);
+
+	  if (points.collided)
+		std::cout << "COLISION!\n";
+	}
   }
 }
 

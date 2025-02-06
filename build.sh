@@ -1,7 +1,7 @@
 ADIV_DIR=~/dev/adiv
 SRC_DIR=./src
 VENDOR_DIR=./vendor
-FLAGS="-std=c++20 -g -ggdb -Wall -Wextra"
+FLAGS="-std=c++20 -g -ggdb -Wall -Wextra -Wno-missing-field-initializers"
 
 get_sources () {
 	for f in $(echo $1/*)

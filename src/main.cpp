@@ -1,9 +1,9 @@
 #include <iostream>
 #include <raylib.h>
 #include <vector>
-#include "ecs/Systems.h"
+#include "ecs/systems/Systems.h"
 #include "ecs/Registry.h"
-#include "ecs/Components.h"
+#include "ecs/components/Components.h"
 #include "ecs/SystemManager.h"
 #include "ecs/EntityManager.h"
 #include "ecs/ComponentManager.h"
@@ -11,8 +11,8 @@
 #define SCREEN_WIDTH  800.0f
 #define SCREEN_HEIGHT 600.0f
 
-void registerComponents();
-
+void createSprite(Entity&, std::shared_ptr<Texture2D>&);
+  
 Registry registry;
 
 int main()
@@ -22,6 +22,7 @@ int main()
 
   registry.RegisterComponent<adv::Player>();
   registry.RegisterComponent<adv::Sprite>();
+  registry.RegisterComponent<adv::Collider>();
   registry.RegisterComponent<adv::RigidBody>();
   registry.RegisterComponent<adv::Transform>();
 
@@ -33,7 +34,15 @@ int main()
 	registry.SetSystemSignature<PhysicsSystem>(sign);
   }
 
-  auto renderSystem  = registry.RegisterSystem<RenderSystem>();
+  auto collisionSystem = registry.RegisterSystem<CollisionSystem>();
+  { 
+	Signature sign;
+	sign.set(registry.GetComponentID<adv::Collider>());
+	sign.set(registry.GetComponentID<adv::Transform>());
+	registry.SetSystemSignature<CollisionSystem>(sign);
+  }
+
+  auto renderSystem = registry.RegisterSystem<RenderSystem>();
   {
 	Signature sign;
 	sign.set(registry.GetComponentID<adv::Sprite>());
@@ -41,7 +50,7 @@ int main()
 	registry.SetSystemSignature<PhysicsSystem>(sign);
   }
   
-  auto playerUpdateSystem  = registry.RegisterSystem<PlayerUpdateSystem>();
+  auto playerUpdateSystem = registry.RegisterSystem<PlayerUpdateSystem>();
   {
 	Signature sign;
 	sign.set(registry.GetComponentID<adv::Sprite>());
@@ -51,27 +60,12 @@ int main()
   }
 
   auto oldman = std::make_shared<Texture2D>(LoadTexture("res/sprites/old_man.jpeg"));
-  Entity player = registry.CreateEntity();
-  {
-	float sprite_size = (float)oldman->width / 8.0f;
-	Rectangle source = { 0, 0, sprite_size, sprite_size };
-	Vector2 pos = {SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f};
-	registry.AddComponent(player, adv::RigidBody{
-		.force = {0, 0},
-		.velocity = {0, 0},
-		.mass = 1.0f
-	  });
-	registry.AddComponent(player, adv::Transform{
-		.translation = pos,
-		.scale = {sprite_size, sprite_size},
-		.rotation = {0, 0}
-	  });
-	registry.AddComponent(player, adv::Sprite{
-		.texture = oldman,
-		.source = source,
-	  });
-	registry.AddComponent(player, adv::Player{});
-  }
+  Entity p = registry.CreateEntity();
+  createSprite(p, oldman);
+  registry.AddComponent(p, adv::Player{});
+
+  Entity e = registry.CreateEntity();
+  createSprite(e, oldman);
   
   SetTargetFPS(60);
   float dt = 0.0f;
@@ -80,6 +74,7 @@ int main()
 	ClearBackground(WHITE);
 	
 	physicsSystem->Update(dt);
+	collisionSystem->Update();
 	playerUpdateSystem->Update(dt);
 	
 	BeginDrawing();
@@ -88,6 +83,29 @@ int main()
   }
 }
 
-void registerComponents()
+void createSprite(Entity& e, std::shared_ptr<Texture2D>& t)
 {
+  registry.AddComponent(e, adv::RigidBody{
+	  .force = {0, 0},
+	  .velocity = {0, 0},
+	  .mass = 1.0f
+	});
+
+  Vector2 pos = {SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f};
+  float sprite_size = (float)t->width / 8.0f;
+  registry.AddComponent(e, adv::Transform{
+	  .translation = pos,
+	  .scale = {sprite_size, sprite_size},
+	  .rotation = {0, 0}
+	});
+  registry.AddComponent<adv::Collider>(e, adv::SquareCollider{
+	  .rectangle = {pos.x, pos.y, sprite_size / 2.0f, sprite_size / 2.0f}
+	});
+  
+  Rectangle source = { 0, 0, sprite_size, sprite_size };
+  registry.AddComponent(e, adv::Sprite{
+	  .texture = t,
+	  .source = source,
+	});
 }
+

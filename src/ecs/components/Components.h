@@ -1,6 +1,8 @@
 #pragma once
 #include <memory>
 #include <raylib.h>
+#include <raymath.h>
+#include "Collider.h" // so you only need to include Components
 
 namespace adv
 {
