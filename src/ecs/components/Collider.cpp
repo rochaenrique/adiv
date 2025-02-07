@@ -10,13 +10,13 @@ namespace adv
 	switch (col.type) {
 	case CIRCLE:
 	  ((CircleCollider&)col).center = c;
-	  std::cout << "CIRCLE HERE\n";
+	  // std::cout << "CIRCLE HERE\n";
 	  break;
 	case SQUARE:
 	  auto& s = ((SquareCollider&)col);
 	  s.rectangle.x = c.x - s.rectangle.width;
 	  s.rectangle.y = c.y - s.rectangle.height;
-	  std::cout << "SQUARE HERE\n";
+	  // std::cout << "SQUARE HERE\n";
 	  break;
 	}
   };
@@ -81,6 +81,9 @@ namespace adv
 	
 	bool swap = a.type > b.type;
 	std::cout << "atype: " << a.type << ", btype: " << b.type << std::endl;
+	assert(a.type >= 0 && a.type <= 2 && "Collider type is not valid");
+	assert(b.type >= 0 && b.type <= 2 && "Collider type is not valid");
+	
 	CollisionPoints points = swap ? tests[b.type][a.type](b, a) : tests[a.type][b.type](a, b);
 
 	if (swap) {

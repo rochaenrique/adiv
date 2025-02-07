@@ -64,8 +64,15 @@ int main()
   createSprite(p, oldman);
   registry.AddComponent(p, adv::Player{});
 
-  Entity e = registry.CreateEntity();
-  createSprite(e, oldman);
+  Entity q = registry.CreateEntity();
+  createSprite(q, oldman);
+
+  // std::vector<Entity> ent(MAX_ENTITIES-1);
+
+  // for (Entity& e : ent) {
+  // 	e = registry.CreateEntity();
+  // 	createSprite(e, oldman);
+  // }
   
   SetTargetFPS(60);
   float dt = 0.0f;

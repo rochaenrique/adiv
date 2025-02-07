@@ -27,6 +27,7 @@ void PhysicsSystem::Update(float dt)
 
 void CollisionSystem::Update()
 {
+
   for (const Entity& a : m_Entities) {
 	adv::Collider& A = registry.GetComponent<adv::Collider>(a);
 	adv::Transform& at = registry.GetComponent<adv::Transform>(a);
@@ -40,9 +41,10 @@ void CollisionSystem::Update()
 	  adv::UpdateCollider(B, bt.translation);
 
 	  adv::CollisionPoints points = TestCollision(A, B);
-
+	  
+	  // // collision responder 
 	  if (points.collided)
-		std::cout << "COLISION!\n";
+	  	std::cout << "COLISION!\n";
 	}
   }
 }
