@@ -17,7 +17,8 @@
 ## TODO:
 [x] ECS Implementation
 [x] Physics Engine Implementation
-[ ] Rectangle Collider Detector Implementation
+[x] Rectangle Collider Detector Implementation
+[ ] Collision Responder
 [ ] General basic player movement
 [ ] Player sprite animations
 [ ] Map loader with textures

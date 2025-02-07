@@ -2,8 +2,10 @@
 #include <raylib.h>
 #include <raymath.h>
 #include <iostream>
+#include "ecs/ECS.h"
 #include "ecs/Registry.h"
 #include "ecs/components/Components.h"
+#include "ecs/components/Collider.h"
 
 extern Registry registry;
 
@@ -13,20 +15,20 @@ void PhysicsSystem::Update(float dt)
 	adv::RigidBody& r = registry.GetComponent<adv::RigidBody>(e);  
 	adv::Transform& t = registry.GetComponent<adv::Transform>(e);
 
-	// apply force
-	// r.force += r.mass * acc;
-	
+	r.force += G * r.mass;
 	assert(r.mass != 0 && "Mass is 0");
+	
 	r.velocity += r.force / r.mass * dt;
 	t.translation += r.velocity * dt;
 
-	// reset force
-	//	r.force = { 0, 0 };
+	r.force = Vector2Zero();
   }
 }
 
 void CollisionSystem::Update()
 {
+  std::vector<adv::Collision> collisions;
+  
   for (const Entity& a : m_Entities) 
 	for (const Entity& b : m_Entities) {
 	  if (a == b) break;
@@ -37,11 +39,13 @@ void CollisionSystem::Update()
 	  adv::Transform& bt = registry.GetComponent<adv::Transform>(b);
 	  
 	  adv::CollisionPoints points = TestCollision(A, at.translation, B, bt.translation);
-	  // // collision responder 
+	  
 	  if (points.collided)
-	  	std::cout << "COLISION!\n";
+		collisions.emplace_back(a, b, points);
 	}
 
+  ImpulseSolver(collisions);
+  PositionSolver(collisions);
 }
 
 void RenderSystem::Update()
@@ -51,7 +55,7 @@ void RenderSystem::Update()
 	adv::Sprite& s = registry.GetComponent<adv::Sprite>(e);
 	DrawTexturePro(*s.texture, s.source,
 				   adv::ReCenter(t),
-				   {0, 0}, 0, GREEN);
+				   {0, 0}, 0, WHITE);
   }
 }
 
