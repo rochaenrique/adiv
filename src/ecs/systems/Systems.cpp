@@ -33,10 +33,9 @@ void CollisionSystem::Update()
 	  
 	  adv::Collider& A = registry.GetComponent<adv::Collider>(a);
 	  adv::Collider& B = registry.GetComponent<adv::Collider>(b);
-	  if (!A.type || !B.type) continue;
-
 	  adv::Transform& at = registry.GetComponent<adv::Transform>(a);
 	  adv::Transform& bt = registry.GetComponent<adv::Transform>(b);
+	  
 	  adv::CollisionPoints points = TestCollision(A, at.translation, B, bt.translation);
 	  // // collision responder 
 	  if (points.collided)
@@ -51,8 +50,17 @@ void RenderSystem::Update()
 	adv::Transform& t = registry.GetComponent<adv::Transform>(e);
 	adv::Sprite& s = registry.GetComponent<adv::Sprite>(e);
 	DrawTexturePro(*s.texture, s.source,
-				   { t.translation.x, t.translation.y, t.scale.x, t.scale.y},
-				   {0, 0}, 0, RED);
+				   adv::ReCenter(t),
+				   {0, 0}, 0, GREEN);
+  }
+}
+
+void RenderCollidersSystem::Update()
+{
+  for (const Entity& e : m_Entities) {
+	adv::Collider& c = registry.GetComponent<adv::Collider>(e);
+	DrawRectangleLinesEx(adv::ReCenter(c.rectangle),
+	  2.0f, RED);
   }
 }
 

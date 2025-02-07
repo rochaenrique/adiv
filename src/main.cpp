@@ -47,8 +47,16 @@ int main()
 	Signature sign;
 	sign.set(registry.GetComponentID<adv::Sprite>());
 	sign.set(registry.GetComponentID<adv::Transform>());
-	registry.SetSystemSignature<PhysicsSystem>(sign);
+	registry.SetSystemSignature<RenderSystem>(sign);
   }
+
+  auto renderCollidersSystem = registry.RegisterSystem<RenderCollidersSystem>();
+  {
+	Signature sign;
+	sign.set(registry.GetComponentID<adv::Collider>());
+	registry.SetSystemSignature<RenderCollidersSystem>(sign);
+  }
+
   
   auto playerUpdateSystem = registry.RegisterSystem<PlayerUpdateSystem>();
   {
@@ -67,13 +75,6 @@ int main()
   Entity q = registry.CreateEntity();
   createSprite(q, oldman);
 
-  // std::vector<Entity> ent(MAX_ENTITIES-1);
-
-  // for (Entity& e : ent) {
-  // 	e = registry.CreateEntity();
-  // 	createSprite(e, oldman);
-  // }
-  
   SetTargetFPS(60);
   float dt = 0.0f;
   while (!WindowShouldClose()) {
@@ -86,6 +87,7 @@ int main()
 	
 	BeginDrawing();
 	renderSystem->Update();
+	renderCollidersSystem->Update();
 	EndDrawing();
   }
 }
@@ -105,8 +107,9 @@ void createSprite(Entity& e, std::shared_ptr<Texture2D>& t)
 	  .scale = {sprite_size, sprite_size},
 	  .rotation = {0, 0}
 	});
-  registry.AddComponent<adv::Collider>(e, adv::SquareCollider({
-		pos.x, pos.y, sprite_size / 2.0f, sprite_size / 2.0f
+  
+  registry.AddComponent(e, adv::Collider({
+		pos.x, pos.y, sprite_size / 2.0f, sprite_size 
 	  }));
   Rectangle source = { 0, 0, sprite_size, sprite_size };
   registry.AddComponent(e, adv::Sprite{

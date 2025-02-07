@@ -20,6 +20,12 @@ public:
   void Update();
 };
 
+class RenderCollidersSystem : public System
+{
+public:
+  void Update();
+};
+
 class PlayerUpdateSystem : public System
 {
 public:

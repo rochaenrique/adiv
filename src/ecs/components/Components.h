@@ -17,4 +17,7 @@ namespace adv
 	size_t GetSlotIndex();
 	void SetSlotIndex(size_t);
   };
+
+  Rectangle ReCenter(const Rectangle&);
+  Rectangle ReCenter(const adv::Transform&);
 }
