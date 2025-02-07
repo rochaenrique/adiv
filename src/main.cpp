@@ -105,10 +105,9 @@ void createSprite(Entity& e, std::shared_ptr<Texture2D>& t)
 	  .scale = {sprite_size, sprite_size},
 	  .rotation = {0, 0}
 	});
-  registry.AddComponent<adv::Collider>(e, adv::SquareCollider{
-	  .rectangle = {pos.x, pos.y, sprite_size / 2.0f, sprite_size / 2.0f}
-	});
-  
+  registry.AddComponent<adv::Collider>(e, adv::SquareCollider({
+		pos.x, pos.y, sprite_size / 2.0f, sprite_size / 2.0f
+	  }));
   Rectangle source = { 0, 0, sprite_size, sprite_size };
   registry.AddComponent(e, adv::Sprite{
 	  .texture = t,

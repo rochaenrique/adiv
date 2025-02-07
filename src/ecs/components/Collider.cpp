@@ -4,28 +4,25 @@
 #include <iostream>
 
 namespace adv
-{ 
-  void UpdateCollider(Collider& col, const Vector2 c)
+{
+  void UpdateCollider(CircleCollider& col, const Vector2 c)
   {
-	switch (col.type) {
-	case CIRCLE:
-	  ((CircleCollider&)col).center = c;
-	  // std::cout << "CIRCLE HERE\n";
-	  break;
-	case SQUARE:
-	  auto& s = ((SquareCollider&)col);
-	  s.rectangle.x = c.x - s.rectangle.width;
-	  s.rectangle.y = c.y - s.rectangle.height;
-	  // std::cout << "SQUARE HERE\n";
-	  break;
-	}
+	col.center = c;
+  }
+
+  void UpdateCollider(SquareCollider& col, const Vector2 c)
+  {
+	col.rectangle.x = c.x - col.rectangle.width;
+	col.rectangle.y = c.y - col.rectangle.height;
   };
 
-  CollisionPoints TestCircleCircle(const Collider& a, const Collider& b)
+  CollisionPoints TestCircleCircle(Collider& a, const Vector2 at, Collider& b, const Vector2 bt)
   {
 	assert(a.type == ColliderType::CIRCLE && b.type == ColliderType::CIRCLE);
-	CircleCollider& A = (CircleCollider&)a;
-	CircleCollider& B = (CircleCollider&)b;
+	CircleCollider A = static_cast<CircleCollider>(a);
+	CircleCollider B = static_cast<CircleCollider>(b);
+	UpdateCollider(A, at);
+	UpdateCollider(B, bt);
 
 	if (CheckCollisionCircles(A.center, A.radius, B.center, B.radius)) {
 	  Vector2 normal = Vector2Normalize(A.center - B.center);
@@ -36,12 +33,14 @@ namespace adv
 	return CollisionPoints();
   }
   
-  CollisionPoints TestCircleSquare(const Collider& a, const Collider& b)
+  CollisionPoints TestCircleSquare(Collider& a, const Vector2 at, Collider& b, const Vector2 bt)
   {
 	assert(a.type == ColliderType::CIRCLE && b.type == ColliderType::SQUARE);
 
-	CircleCollider& A = (CircleCollider&)a;
-	SquareCollider& B = (SquareCollider&)b;
+	CircleCollider A = static_cast<CircleCollider>(a);
+	SquareCollider B = static_cast<SquareCollider>(b);
+	UpdateCollider(A, at);
+	UpdateCollider(B, bt);
 
 	if (CheckCollisionCircleRec(A.center, A.radius, B.rectangle)) {
 	  Vector2 Bcenter = { B.rectangle.x + B.rectangle.width, B.rectangle.y + B.rectangle.height };
@@ -53,12 +52,14 @@ namespace adv
 	return CollisionPoints();
   }
   
-  CollisionPoints TestSquareSquare(const Collider& a, const Collider& b)
+  CollisionPoints TestSquareSquare(Collider& a, const Vector2 at, Collider& b, const Vector2 bt)
   {
 	assert(a.type == ColliderType::SQUARE && b.type == ColliderType::SQUARE);
 
-	SquareCollider& A = (SquareCollider&)a;
-	SquareCollider& B = (SquareCollider&)b;
+	SquareCollider A = static_cast<SquareCollider>(a);
+	SquareCollider B = static_cast<SquareCollider>(b);
+	UpdateCollider(A, at);
+	UpdateCollider(B, bt);
 
 	if (CheckCollisionRecs(A.rectangle, B.rectangle)) {
 	  Vector2 Acenter = { A.rectangle.x + A.rectangle.width, A.rectangle.y + A.rectangle.height };
@@ -70,9 +71,9 @@ namespace adv
 	return CollisionPoints();
   }
 
-  using ContactFunc = CollisionPoints(*)(const Collider&, const Collider&);
+  using ContactFunc = CollisionPoints(*)(Collider&, const Vector2, Collider&, const Vector2);
 
-  CollisionPoints TestCollision(const Collider& a, const Collider& b)
+  CollisionPoints TestCollision(Collider& a, const Vector2 at, Collider& b, const Vector2 bt)
   {
 	static const ContactFunc tests[2][2] = {
 	  { TestCircleCircle, TestCircleSquare },
@@ -80,11 +81,10 @@ namespace adv
 	};
 	
 	bool swap = a.type > b.type;
-	std::cout << "atype: " << a.type << ", btype: " << b.type << std::endl;
 	assert(a.type >= 0 && a.type <= 2 && "Collider type is not valid");
 	assert(b.type >= 0 && b.type <= 2 && "Collider type is not valid");
-	
-	CollisionPoints points = swap ? tests[b.type][a.type](b, a) : tests[a.type][b.type](a, b);
+
+	CollisionPoints points = swap ? tests[b.type][a.type](b, bt, a, at) : tests[a.type][b.type](a, at, b, bt);
 
 	if (swap) {
 	  std::swap(points.a, points.b);
