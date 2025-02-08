@@ -18,7 +18,7 @@
 [x] ECS Implementation
 [x] Physics Engine Implementation
 [x] Rectangle Collider Detector Implementation
-[ ] Collision Responder
+[x] Collision Responder
 [ ] General basic player movement
 [ ] Player sprite animations
 [ ] Map loader with textures

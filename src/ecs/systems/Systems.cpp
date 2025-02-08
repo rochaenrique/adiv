@@ -25,7 +25,7 @@ void PhysicsSystem::Update(float dt)
   }
 }
 
-void CollisionSystem::Update()
+void CollisionSystem::Update(float)
 {
   std::vector<adv::Collision> collisions;
   
@@ -48,7 +48,7 @@ void CollisionSystem::Update()
   PositionSolver(collisions);
 }
 
-void RenderSystem::Update()
+void RenderSystem::Update(float)
 {
   for (const Entity& e : m_Entities) {
 	adv::Transform& t = registry.GetComponent<adv::Transform>(e);
@@ -59,7 +59,7 @@ void RenderSystem::Update()
   }
 }
 
-void RenderCollidersSystem::Update()
+void RenderCollidersSystem::Update(float)
 {
   for (const Entity& e : m_Entities) {
 	adv::Collider& c = registry.GetComponent<adv::Collider>(e);

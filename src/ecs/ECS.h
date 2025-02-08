@@ -15,6 +15,7 @@ using TypeID      = const char *;
 class System
 {
 public:
+  void Update(float);
   std::set<Entity> m_Entities;
 };
 
