@@ -1,5 +1,4 @@
 #pragma once
-
 #include <memory>
 #include <raylib.h>
 #include "Window.h"
@@ -19,11 +18,13 @@ private:
   std::array<Entity, MAX_ENTITIES> m_Entities {};
   std::vector<std::shared_ptr<Texture2D>> m_Textures {};
 
-  std::array<std::shared_ptr<System>, 3> m_UpdateSystems;
-  std::array<std::shared_ptr<System>, 2> m_DrawSystems;
+  std::vector<std::shared_ptr<System>> m_UpdateSystems;
+  std::vector<std::shared_ptr<System>> m_DrawSystems;
   
   void InitComponents() const;
   void InitSystems();
   void CreateEntities();
   static void CreateSprite(Entity&, const std::shared_ptr<Texture2D>&, const Vector2, const adv::RigidBody&);
+  
+  void Demo(); // TODO: Remove
 };

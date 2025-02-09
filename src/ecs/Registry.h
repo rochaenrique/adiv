@@ -22,11 +22,13 @@ public:
 	  RegisterComponent<Tail...>();
   }
 
-  template<typename T>
-  void AddComponent(Entity e, T c)
+  template<typename Head, typename ... Tail>
+  void AddComponent(Entity e, Head head, Tail... tail)
   {
-	m_CM->Add<T>(e, c);
-	UpdateSignature<T>(e, true);
+	m_CM->Add<Head>(e, head);
+	UpdateSignature<Head>(e, true);
+	if constexpr(sizeof...(tail) > 0)
+	  AddComponent(e, tail...);
   }
 
   template<typename T>

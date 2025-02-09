@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <raylib.h>
 
 #define WINDOW_WIDTH  1600
 #define WINDOW_HEIGHT 900
@@ -35,6 +36,10 @@ public:
 
   unsigned GetWidth() const { return m_Data.Width; };
   unsigned GetHeight() const { return m_Data.Height; };
+  Vector2  GetCenter() const
+  {
+	return { m_Data.Width / 2.0f, m_Data.Height / 2.0f };
+  };
 
 private:
   WindowOptions m_Data;

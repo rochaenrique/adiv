@@ -1,5 +1,5 @@
 #pragma once
-#include <raylib.h>
+#include <raymath.h>
 
 namespace adv
 {
@@ -16,14 +16,22 @@ namespace adv
 	  mass{m}, staticFriction{sf}, dynamicFriction{df}, restitution{r},
 	  dynamic{d}
 	{};
-	
-	Vector2 force, velocity;
-	float mass, staticFriction, dynamicFriction, restitution;
-	bool dynamic;
 
+	static RigidBody CreateStatic(float sf, float df)
+	{
+	  return RigidBody(Vector2Zero(), Vector2Zero(), 0.0f, sf, df, 1.0f, false);
+	};
+
+	void AddForce(Vector2 f) { force += f * mass; };
+	void ApplyForces(float dt) {velocity += force * InvMass() * dt; }
+	void ResetForce() { force = Vector2Zero(); };
 	float InvMass() const
 	{
 	  return (mass != 0.0f) ? 1.0f / mass : 0.0f;
 	};
+	
+	Vector2 force, velocity;
+	float mass, staticFriction, dynamicFriction, restitution;
+	bool dynamic;
   };
 }

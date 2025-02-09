@@ -1,10 +1,11 @@
 #include "Collider.h"
+#include <cmath>
+#include <cassert>
+#include <raylib.h>
+#include <iostream>
 #include "Components.h"
 #include "ecs/Registry.h"
-#include <raylib.h>
-#include <cassert>
-#include <cmath>
-#include <iostream>
+#include "util/Helper.h"
 
 #define PERCENT .4f
 #define SLOP    .01f
@@ -15,9 +16,10 @@ namespace adv
 {
   CollisionPoints Collider::TestCollision(Collider& a, Collider& b)
   {
-	if (CheckCollisionRecs(a.rectangle, b.rectangle)) {
-	  Vector2 ac = { a.rectangle.x + a.rectangle.width, a.rectangle.y + b.rectangle.height };
-	  Vector2 bc = { b.rectangle.x + b.rectangle.width, b.rectangle.y + b.rectangle.height };
+	if (CheckCollisionRecs(adv::ReCenter(a.rectangle), adv::ReCenter(b.rectangle))) {
+	  Vector2 ac = { a.rectangle.x, a.rectangle.y };
+	  Vector2 bc = { b.rectangle.x, b.rectangle.y };
+	  
 	  Vector2 normal = Vector2Normalize(ac - bc);
 	  return CollisionPoints(Vector2Zero(), Vector2Zero(), normal, true);
 	}
@@ -35,7 +37,6 @@ namespace adv
 	  Vector2 bvel = br.velocity;
 	  Vector2 normal = col.points.normal;
 	  
-	  assert(ar.mass != 0 && br.mass != 0 && "Mass equal to 0!");
 	  float aInvmass = ar.InvMass();
 	  float bInvmass = br.InvMass();
 	  
@@ -83,7 +84,6 @@ namespace adv
 	  adv::RigidBody& ar = registry.GetComponent<adv::RigidBody>(col.a);
 	  adv::RigidBody& br = registry.GetComponent<adv::RigidBody>(col.b);
 	  
-	  assert(ar.mass != 0 && br.mass != 0 && "Mass equal to 0!");
 	  float aInvmass = ar.InvMass();
 	  float bInvmass = br.InvMass();
 	  Vector2 normal = col.points.normal;
@@ -99,5 +99,4 @@ namespace adv
 	  if (br.dynamic) bt.translation -= correction * bInvmass;
 	}
   }
-
 }

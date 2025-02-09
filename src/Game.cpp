@@ -1,8 +1,14 @@
 #include "Game.h"
 #include <iostream>
+#include <format>
+#include <cstdio>
 #include "ecs/components/Components.h"
+#include "util/Random.h"
+#include "util/Helper.h"
 
-#define OLDMAN_PATH "res/sprites/old_man.jpeg"
+#define SPRITE_DIR  "res/sprites"
+#define OLDMAN_PATH SPRITE_DIR"/old_man.jpeg"
+#define TILES_PATH  SPRITE_DIR"/tiles.png"
 
 Registry registry;
 
@@ -12,12 +18,15 @@ Game::Game(const WindowOptions& wopt)
   m_Window->Init();
 
   m_Textures.emplace_back(std::make_shared<Texture2D>(LoadTexture(OLDMAN_PATH)));
-
+  m_Textures.emplace_back(std::make_shared<Texture2D>(LoadTexture(TILES_PATH)));
   // ECS 
   registry.Init();
   InitComponents();
   InitSystems();
-  CreateEntities();
+  //CreateEntities();
+
+  // TODO REMOVE
+  Demo();
 }
 
 void Game::Run()
@@ -93,24 +102,45 @@ void Game::CreateEntities()
   
   for (Entity& e : m_Entities) {
 	e = registry.CreateEntity();
-	auto r = adv::RigidBody({ (float)GetRandomValue(-10, 10), (float)GetRandomValue(-10, 10) },
-							{ (float)GetRandomValue(-20, 20), (float)GetRandomValue(-30, 30) },
-							(float)GetRandomValue(1, 15),
-							(float)GetRandomValue(0, 5),
-							(float)GetRandomValue(0, 5),
-							GetRandomValue(0, 10) / 10.0f,
-							true
-							);
-	CreateSprite(e, oldman, { (float)GetRandomValue(0, width), (float)GetRandomValue(0, height) }, r);
+	CreateSprite(e, oldman, adv::RandomVector2(width, height), adv::RandomRigidBody());
   }
 }
 
 void Game::CreateSprite(Entity& e, const std::shared_ptr<Texture2D>&t, const Vector2 ipos, const adv::RigidBody& r)
 {
-  float sprite_size = (float)t->width / 8.0f;
+  float spriteWidth = (float)t->width * .125f;
+  Vector2 spriteSize = { spriteWidth, spriteWidth };
+  Vector2 realSize = spriteSize * .25f;
   
   registry.AddComponent(e, r);
-  registry.AddComponent(e, adv::Transform(ipos, {sprite_size / 8.0f, sprite_size / 8.0f}, Vector2Zero()));
-  registry.AddComponent(e, adv::Collider({ ipos.x, ipos.y, sprite_size/ 8.0f, sprite_size / 8.0f }));
-  registry.AddComponent(e, adv::Sprite(t, { 0, 0, sprite_size, sprite_size }));
+  registry.AddComponent(e, adv::Transform(ipos, realSize, Vector2Zero()));
+  registry.AddComponent(e, adv::Collider(realSize));
+  registry.AddComponent(e, adv::Sprite(t, { 0, 0, spriteSize.x, spriteSize.y }));
+}
+
+void Game::Demo()
+{
+  auto oldman = m_Textures.at(0);
+  Entity player = registry.CreateEntity();
+  Vector2 pInitialPos = m_Window->GetCenter() + Vector2{ 0.0f, 100.0f };
+  adv::RigidBody playerRigidBody(Vector2Zero(), Vector2Zero(),
+								 10.0f, .5f, .1f, .5f, true);
+  CreateSprite(player, oldman, pInitialPos, playerRigidBody);
+  registry.AddComponent(player, adv::Player{});
+
+  auto tiles = m_Textures.at(1);
+  Entity floor = registry.CreateEntity();
+  Vector2 tilesSize = { tiles->width * .1f, tiles->height / 6.0f };
+  Vector2 floorSize = { (float)m_Window->GetWidth(), m_Window->GetHeight() * .25f };
+  Rectangle src = { tilesSize.x * 3.0f, tilesSize.y * 4.0f, tilesSize.x, tilesSize.y };
+  
+  adv::Transform transform(m_Window->GetCenter(), floorSize, Vector2Zero());
+  adv::ToBottom(transform, m_Window->GetHeight());
+  registry.AddComponent(
+						floor,
+						adv::RigidBody::CreateStatic(1.0f, 1.0f),
+						adv::Sprite(tiles, src),
+						transform,
+						adv::Collider(floorSize)
+						);
 }

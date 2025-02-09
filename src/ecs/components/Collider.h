@@ -19,14 +19,26 @@ namespace adv
 
   struct Collider
   {
-	Rectangle rectangle;
+	Collider()
+	  : rectangle{0, 0, 0, 0} {};
+	
+	Collider(Rectangle r)
+	  : rectangle{r} {};
+
+	Collider(float w, float h)
+	  : rectangle{0, 0, w, h} {};
+
+	Collider(Vector2 sz)
+	  : rectangle{0, 0, sz.x, sz.y} {};
+
 	void UpdateCenter(const Vector2 c)
 	{
 	  rectangle.x = c.x;
 	  rectangle.y = c.y;
 	};
-	
 	static CollisionPoints TestCollision(Collider&, Collider&);
+	
+	Rectangle rectangle;
   };
 
   struct Collision

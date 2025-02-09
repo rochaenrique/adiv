@@ -1,5 +1,6 @@
 #pragma once
 #include <raymath.h>
+#include "RigidBody.h"
 
 namespace adv
 {
@@ -11,7 +12,8 @@ namespace adv
   Transform()
 	: translation{Vector2Zero()}, scale{Vector2Zero()}, rotation{Vector2Zero()}
 	{};
-	
+
+	void Displace(Vector2 s) { translation += s; };
 	Vector2 translation, scale, rotation;
   };
 }

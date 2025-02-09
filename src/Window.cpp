@@ -1,5 +1,4 @@
 #include "Window.h"
-#include <raylib.h>
 
 Window* Window::Create(WindowOptions opt)
 {
