@@ -1,6 +1,6 @@
 #include "Game.h"
 #include <iostream>
-#include "ecs/components/Collider.h"
+#include "ecs/components/Components.h"
 
 #define OLDMAN_PATH "res/sprites/old_man.jpeg"
 
@@ -97,7 +97,8 @@ void Game::CreateEntities()
 							{ (float)GetRandomValue(-20, 20), (float)GetRandomValue(-30, 30) },
 							(float)GetRandomValue(1, 15),
 							(float)GetRandomValue(0, 5),
-							(float)GetRandomValue(0, 5)
+							(float)GetRandomValue(0, 5),
+							true
 							);
 	CreateSprite(e, oldman, { (float)GetRandomValue(0, width), (float)GetRandomValue(0, height) }, r);
   }

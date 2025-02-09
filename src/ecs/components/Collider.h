@@ -6,8 +6,6 @@
 
 namespace adv
 {
-  struct Collider { Rectangle rectangle; };
-  
   struct CollisionPoints
   {
   CollisionPoints()
@@ -19,14 +17,25 @@ namespace adv
 	bool collided;
   };
 
+  struct Collider
+  {
+	Rectangle rectangle;
+	void UpdateCenter(const Vector2 c)
+	{
+	  rectangle.x = c.x;
+	  rectangle.y = c.y;
+	};
+	
+	static CollisionPoints TestCollision(Collider&, Collider&);
+  };
+
   struct Collision
   {
 	Entity a, b;
 	CollisionPoints points;
   };
 
-  void UpdateCollider(Collider&, const Vector2);
-  CollisionPoints TestCollision(Collider&, const Vector2, Collider&, const Vector2);
+
   void ImpulseSolver(std::vector<Collision>&);
   void PositionSolver(std::vector<Collision>&);
 }

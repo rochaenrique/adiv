@@ -5,7 +5,7 @@
 #include "ecs/ECS.h"
 #include "ecs/Registry.h"
 #include "ecs/components/Components.h"
-#include "ecs/components/Collider.h"
+#include "util/Helper.h"
 
 extern Registry registry;
 
@@ -34,11 +34,13 @@ void CollisionSystem::Update(float)
 	  if (a == b) break;
 	  
 	  adv::Collider& A = registry.GetComponent<adv::Collider>(a);
-	  adv::Collider& B = registry.GetComponent<adv::Collider>(b);
 	  adv::Transform& at = registry.GetComponent<adv::Transform>(a);
+	  adv::Collider& B = registry.GetComponent<adv::Collider>(b);
 	  adv::Transform& bt = registry.GetComponent<adv::Transform>(b);
-	  
-	  adv::CollisionPoints points = TestCollision(A, at.translation, B, bt.translation);
+	  A.UpdateCenter(at.translation);
+	  B.UpdateCenter(bt.translation);
+
+	  adv::CollisionPoints points = adv::Collider::TestCollision(A,B);
 	  
 	  if (points.collided)
 		collisions.emplace_back(a, b, points);
