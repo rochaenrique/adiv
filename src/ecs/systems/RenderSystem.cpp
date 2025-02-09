@@ -1,5 +1,6 @@
 #include "RenderSystem.h"
 #include "ecs/Registry.h"
+#include <iostream>
 
 extern Registry registry;
 

@@ -16,21 +16,31 @@ public:
   
   void DestroyEntity(Entity e);
 
+  template<typename T>
+  void RegisterComponent() { m_CM->Register<T>(); }
+
   template<typename Head, typename ... Tail>
-  void RegisterComponent()
+  void RegisterMulComponent()
   {
 	m_CM->Register<Head>();
 	if constexpr(sizeof...(Tail) > 0)
-	  RegisterComponent<Tail...>();
+	  RegisterMulComponent<Tail...>();
+  }
+  
+  template<typename T>
+  void AddComponent(Entity e, T c)
+  {
+	m_CM->Add<T>(e, c);
+	UpdateSignature<T>(e, true);
   }
 
   template<typename Head, typename ... Tail>
-  void AddComponent(Entity e, Head head, Tail... tail)
+  void AddMulComponent(Entity e, Head head, Tail... tail)
   {
 	m_CM->Add<Head>(e, head);
 	UpdateSignature<Head>(e, true);
 	if constexpr(sizeof...(tail) > 0)
-	  AddComponent(e, tail...);
+	  AddMulComponent(e, tail...);
   }
 
   template<typename T>
@@ -51,8 +61,6 @@ public:
 
   template<typename T>
   void SetSystemSignature(Signature s) { m_SM->SetSignature<T>(s); }
-
-  // Cool functions
   
   template<typename S, typename Head, typename ... Tail>
   std::shared_ptr<S> CreateSystem()

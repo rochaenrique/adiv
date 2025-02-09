@@ -27,8 +27,23 @@ namespace adv
 	return ReCenter(ToRect(t));
   }
   
+  void ToTop(adv::Transform& t, float y)
+  {
+	t.translation.y = y + t.scale.y / 2.0f;
+  }
+  
   void ToBottom(adv::Transform& t, float y)
   {
 	t.translation.y = y - t.scale.y / 2.0f;
   }
+  
+  void ToLeft(adv::Transform& t, float x)
+  {
+	t.translation.x = x + t.scale.x / 2.0f;
+  };
+
+  void ToRight(adv::Transform& t, float x)
+  {
+	t.translation.x = x - t.scale.x / 2.0f;
+  };
 }

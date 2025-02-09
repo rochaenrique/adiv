@@ -8,7 +8,10 @@ namespace adv
   
   Rectangle ReCenter(const Rectangle& r);
   Rectangle GetCenteredRect(const adv::Transform& t);
-
-  void ToBottom(adv::Transform& t, float y);
+  
+  void ToTop(adv::Transform&, float);
+  void ToBottom(adv::Transform&, float);
+  void ToLeft(adv::Transform&, float);
+  void ToRight(adv::Transform&, float);
 }
 

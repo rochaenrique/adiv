@@ -18,6 +18,7 @@ namespace adv
 	  Vector2 bc = { b.rectangle.x, b.rectangle.y };
 	  
 	  Vector2 normal = Vector2Normalize(ac - bc);
+	  
 	  return CollisionPoints(Vector2Zero(), Vector2Zero(), normal, true);
 	}
 	

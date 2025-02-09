@@ -2,6 +2,7 @@
 #include <iostream>
 #include <format>
 #include <cstdio>
+#include "ecs/Systems.h"
 #include "ecs/Components.h"
 #include "util/Random.h"
 #include "util/Helper.h"
@@ -50,48 +51,97 @@ void Game::Run()
 
 void Game::InitComponents() const
 {
-  registry.RegisterComponent<
-	adv::Player,
-	adv::Sprite,
-	adv::Collider,
-	adv::RigidBody,
-	adv::Transform
-   >();
+  // registry.RegisterComponent<
+  // 	adv::Player,
+  // 	adv::Sprite,
+  // 	adv::Collider,
+  // 	adv::RigidBody,
+  // 	adv::Transform
+  //  >();
+
+  registry.RegisterComponent<adv::Player>();
+  registry.RegisterComponent<adv::Sprite>();
+  registry.RegisterComponent<adv::Collider>();
+  registry.RegisterComponent<adv::RigidBody>();
+  registry.RegisterComponent<adv::Transform>();
 }
 
 void Game::InitSystems()
 {
-  m_UpdateSystems = { 
-	registry.CreateSystem<
-	  PhysicsSystem,
-	  adv::RigidBody,
-	  adv::Transform
-	>(),
-	registry.CreateSystem<
-	  CollisionSystem,
-	  adv::Collider,
-	  adv::RigidBody,
-	  adv::Transform
-	>(),
-	registry.CreateSystem<
-	  PlayerUpdateSystem,
-	  adv::Sprite,
-	  adv::Player,
-	  adv::Transform
-	>()
+  auto physicsSystem = registry.RegisterSystem<PhysicsSystem>();
+  { 
+	Signature sign;
+	sign.set(registry.GetComponentID<adv::RigidBody>());
+	sign.set(registry.GetComponentID<adv::Transform>());
+	registry.SetSystemSignature<PhysicsSystem>(sign);
+  }
+  
+  auto collisionSystem = registry.RegisterSystem<CollisionSystem>();
+  { 
+	Signature sign;
+	sign.set(registry.GetComponentID<adv::Collider>());
+	sign.set(registry.GetComponentID<adv::RigidBody>());
+	sign.set(registry.GetComponentID<adv::Transform>());
+	registry.SetSystemSignature<CollisionSystem>(sign);
+  }
+  
+  auto playerSystem  = registry.RegisterSystem<PlayerSystem>();
+  {
+	Signature sign;
+	sign.set(registry.GetComponentID<adv::Sprite>());
+	sign.set(registry.GetComponentID<adv::Player>());
+	sign.set(registry.GetComponentID<adv::RigidBody>());
+	registry.SetSystemSignature<PlayerSystem>(sign);
+  }
+
+  auto renderSystem  = registry.RegisterSystem<RenderSystem>();
+  {
+	Signature sign;
+	sign.set(registry.GetComponentID<adv::Sprite>());
+	sign.set(registry.GetComponentID<adv::Transform>());
+	registry.SetSystemSignature<PhysicsSystem>(sign);
+  }
+
+  m_UpdateSystems = {
+	physicsSystem,
+	collisionSystem,
+	playerSystem,
   };
 
   m_DrawSystems = {
-	registry.CreateSystem<
-	  RenderSystem,
-	  adv::Sprite,
-	  adv::Transform
-	>(),
-	registry.CreateSystem<
-	  RenderCollidersSystem,
-	  adv::Collider
-	>(),
+	renderSystem,
   };
+
+  // m_UpdateSystems = { 
+  // 	registry.CreateSystem<
+  // 	  PhysicsSystem,
+  // 	  adv::RigidBody,
+  // 	  adv::Transform
+  // 	>(),
+  // 	registry.CreateSystem<
+  // 	  CollisionSystem,
+  // 	  adv::Collider,
+  // 	  adv::RigidBody,
+  // 	  adv::Transform
+  // 	>(),
+  // 	registry.CreateSystem<
+  // 	  PlayerSystem,
+  // 	  adv::Sprite,
+  // 	  adv::Player,
+  // 	  adv::RigidBody,
+  // 	>()
+  // };
+  // m_DrawSystems = {
+  // 	registry.CreateSystem<
+  // 	  RenderSystem,
+  // 	  adv::Sprite,
+  // 	  adv::Transform
+  // 	>(),
+  // 	// registry.CreateSystem<
+  // 	//   RenderCollidersSystem,
+  // 	//   adv::Collider
+  // 	// >(),
+  // };
 }
 
 void Game::CreateEntities()
@@ -120,27 +170,44 @@ void Game::CreateSprite(Entity& e, const std::shared_ptr<Texture2D>&t, const Vec
 
 void Game::Demo()
 {
+  // player
   auto oldman = m_Textures.at(0);
   Entity player = registry.CreateEntity();
   Vector2 pInitialPos = m_Window->GetCenter() + Vector2{ 0.0f, 100.0f };
   adv::RigidBody playerRigidBody(Vector2Zero(), Vector2Zero(),
-								 10.0f, .5f, .1f, .5f, true);
+								 90.0f, .5f, 1.0f, 1.0f, true);
   CreateSprite(player, oldman, pInitialPos, playerRigidBody);
   registry.AddComponent(player, adv::Player{});
 
+  // second, for testing
+  Entity second = registry.CreateEntity();
+  Vector2 secondInitialPos = pInitialPos + Vector2{ 0.0f, 100.0f };
+  adv::RigidBody secondRigidBody = playerRigidBody;
+  secondRigidBody.AddForce({ 0.0f, -100.0f });
+  CreateSprite(second, oldman, secondInitialPos, secondRigidBody);
+
+  // tiles
   auto tiles = m_Textures.at(1);
-  Entity floor = registry.CreateEntity();
-  Vector2 tilesSize = { tiles->width * .1f, tiles->height / 6.0f };
-  Vector2 floorSize = { (float)m_Window->GetWidth(), m_Window->GetHeight() * .25f };
-  Rectangle src = { tilesSize.x * 3.0f, tilesSize.y * 4.0f, tilesSize.x, tilesSize.y };
+  Vector2 tileTexSize = { tiles->width * .1f, tiles->height / 6.0f };
+  Rectangle src = { tileTexSize.x * 3.0f, tileTexSize.y * 4.0f, tileTexSize.x, tileTexSize.y };
+
+  const int tileAmount = 10;
+  m_Entities.resize(tileAmount);
   
-  adv::Transform transform(m_Window->GetCenter(), floorSize, Vector2Zero());
-  adv::ToBottom(transform, m_Window->GetHeight());
-  registry.AddComponent(
-						floor,
-						adv::RigidBody::CreateStatic(1.0f, 1.0f),
-						adv::Sprite(tiles, src),
-						transform,
-						adv::Collider(floorSize)
-						);
+  Vector2 tileSize = { (float)m_Window->GetWidth() / tileAmount, m_Window->GetHeight() * .10f };
+  
+  for (size_t i = 0; i < tileAmount; i++) {
+	m_Entities[i] = registry.CreateEntity();
+	Vector2 pos = {tileSize.x * (i + .5f), 0};
+	adv::Transform transform(pos, tileSize, Vector2Zero());
+	adv::ToBottom(transform, m_Window->GetHeight());
+	
+	std::cout << "Adding tile at (" << transform.translation.x << ", " <<
+	  transform.translation.y << ")\n";
+	
+	registry.AddComponent(m_Entities[i], adv::RigidBody::CreateStatic(10.0f, 5.0f));
+	registry.AddComponent(m_Entities[i], adv::Sprite(tiles, src));
+	registry.AddComponent(m_Entities[i], transform);
+	registry.AddComponent(m_Entities[i], adv::Collider(tileSize));
+  }
 }

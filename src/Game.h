@@ -15,7 +15,8 @@ public:
 private:
   float m_DT = 0.0f;
   std::unique_ptr<Window> m_Window;
-  std::array<Entity, MAX_ENTITIES> m_Entities {};
+  // std::array<Entity, MAX_ENTITIES> m_Entities {};
+  std::vector<Entity> m_Entities {};
   std::vector<std::shared_ptr<Texture2D>> m_Textures {};
 
   std::vector<std::shared_ptr<System>> m_UpdateSystems;
