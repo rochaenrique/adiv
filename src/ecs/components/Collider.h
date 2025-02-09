@@ -46,8 +46,4 @@ namespace adv
 	Entity a, b;
 	CollisionPoints points;
   };
-
-
-  void ImpulseSolver(std::vector<Collision>&);
-  void PositionSolver(std::vector<Collision>&);
 }

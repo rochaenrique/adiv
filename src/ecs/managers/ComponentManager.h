@@ -1,5 +1,5 @@
 #pragma once
-#include "ECS.h"
+#include "ecs/ECS.h"
 #include "ComponentArray.h"
 #include <unordered_map>
 #include <memory>

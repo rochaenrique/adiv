@@ -4,8 +4,8 @@
 #include "Window.h"
 #include "ecs/ECS.h"
 #include "ecs/Registry.h"
-#include "ecs/systems/Systems.h"
-#include "ecs/components/Components.h"
+#include "ecs/Systems.h"
+#include "ecs/Components.h"
 
 class Game
 {

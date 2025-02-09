@@ -1,6 +1,6 @@
 #pragma once
 #include <raylib.h>
-#include "ecs/components/Components.h"
+#include "ecs/Components.h"
 
 namespace adv
 {

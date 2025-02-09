@@ -2,7 +2,7 @@
 #include <iostream>
 #include <format>
 #include <cstdio>
-#include "ecs/components/Components.h"
+#include "ecs/Components.h"
 #include "util/Random.h"
 #include "util/Helper.h"
 
@@ -34,7 +34,7 @@ void Game::Run()
   std::cout << "STARTING\n";
   while (!WindowShouldClose()) {
 	m_DT = GetFrameTime();
-	ClearBackground(WHITE);
+	ClearBackground(SKYBLUE);
 
 	for (const auto& s : m_UpdateSystems)
 	  s->Update(m_DT);

@@ -1,9 +1,11 @@
 #pragma once
 #include <memory>
 #include "ECS.h"
-#include "EntityManager.h"
-#include "SystemManager.h"
-#include "ComponentManager.h"
+#include "managers/SystemManager.h"
+#include "managers/EntityManager.h"
+#include "managers/ComponentManager.h"
+
+
 
 class Registry
 {
