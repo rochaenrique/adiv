@@ -4,6 +4,7 @@
 #include <raylib.h>
 #include "Window.h"
 #include "ecs/ECS.h"
+#include "ecs/Registry.h"
 #include "ecs/systems/Systems.h"
 #include "ecs/components/Components.h"
 
@@ -17,15 +18,12 @@ private:
   std::unique_ptr<Window> m_Window;
   std::array<Entity, MAX_ENTITIES> m_Entities {};
   std::vector<std::shared_ptr<Texture2D>> m_Textures {};
+
+  std::array<std::shared_ptr<System>, 3> m_UpdateSystems;
+  std::array<std::shared_ptr<System>, 2> m_DrawSystems;
   
-  std::shared_ptr<PhysicsSystem> m_PhysicsSystem;
-  std::shared_ptr<CollisionSystem> m_CollisionSystem;
-  std::shared_ptr<RenderSystem> m_RenderSystem;
-  std::shared_ptr<RenderCollidersSystem> m_RenderCollidersSystem;
-  std::shared_ptr<PlayerUpdateSystem> m_PlayerUpdateSystem;
-  
-  void InitComponents();
+  void InitComponents() const;
   void InitSystems();
   void CreateEntities();
-  void CreateSprite(Entity&, const std::shared_ptr<Texture2D>&, const Vector2, const adv::RigidBody&);
+  static void CreateSprite(Entity&, const std::shared_ptr<Texture2D>&, const Vector2, const adv::RigidBody&);
 };

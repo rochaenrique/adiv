@@ -14,8 +14,13 @@ public:
   
   void DestroyEntity(Entity e);
 
-  template<typename T>
-  void RegisterComponent() { m_CM->Register<T>(); }
+  template<typename Head, typename ... Tail>
+  void RegisterComponent()
+  {
+	m_CM->Register<Head>();
+	if constexpr(sizeof...(Tail) > 0)
+	  RegisterComponent<Tail...>();
+  }
 
   template<typename T>
   void AddComponent(Entity e, T c)
@@ -42,6 +47,26 @@ public:
 
   template<typename T>
   void SetSystemSignature(Signature s) { m_SM->SetSignature<T>(s); }
+
+  // Cool functions
+  
+  template<typename S, typename Head, typename ... Tail>
+  std::shared_ptr<S> CreateSystem()
+  {
+	auto sys = RegisterSystem<S>();
+	Signature sign;
+	SignSystems<Head, Tail...>(sign);
+	SetSystemSignature<S>(sign);
+	return sys;
+  }
+  
+  template<typename Head, typename ... Tail>
+  void SignSystems(Signature sign)
+  {
+	sign.set(GetComponentID<Head>());
+	if constexpr(sizeof...(Tail) > 0)
+	  SignSystems<Tail...>(sign);
+  }
   
 private:
   std::unique_ptr<EntityManager>    m_EM;
@@ -56,6 +81,5 @@ private:
 	m_EM->SetSignature(e, sig);
 	m_SM->SignatureChanged(e, sig);
   }
-
 };
 

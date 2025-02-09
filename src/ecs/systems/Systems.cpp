@@ -48,27 +48,7 @@ void CollisionSystem::Update(float)
   PositionSolver(collisions);
 }
 
-void RenderSystem::Update(float)
-{
-  for (const Entity& e : m_Entities) {
-	adv::Transform& t = registry.GetComponent<adv::Transform>(e);
-	adv::Sprite& s = registry.GetComponent<adv::Sprite>(e);
-	DrawTexturePro(*s.texture, s.source,
-				   adv::ReCenter(t),
-				   {0, 0}, 0, WHITE);
-  }
-}
-
-void RenderCollidersSystem::Update(float)
-{
-  for (const Entity& e : m_Entities) {
-	adv::Collider& c = registry.GetComponent<adv::Collider>(e);
-	DrawRectangleLinesEx(adv::ReCenter(c.rectangle),
-	  2.0f, RED);
-  }
-}
-
-void PlayerUpdateSystem::Update(float dt)
+void PlayerUpdateSystem::Update(float)
 {
   for (const Entity& e : m_Entities) {
 	//	adv::Sprite& s = registry.GetComponent<adv::Sprite>(e);
@@ -102,3 +82,24 @@ void PlayerUpdateSystem::Update(float dt)
 	//   " i:" << slot << ", s: (" << s.source.x << ", " << s.source.y <<  ")\n";
   }
 }
+
+void RenderSystem::Update(float) 
+{
+  for (const Entity& e : m_Entities) {
+	adv::Transform& t = registry.GetComponent<adv::Transform>(e);
+	adv::Sprite& s = registry.GetComponent<adv::Sprite>(e);
+	DrawTexturePro(*s.texture, s.source,
+				   adv::ReCenter(t),
+				   {0, 0}, 0, WHITE);
+  }
+}
+
+void RenderCollidersSystem::Update(float)
+{
+  for (const Entity& e : m_Entities) {
+	adv::Collider& c = registry.GetComponent<adv::Collider>(e);
+	DrawRectangleLinesEx(adv::ReCenter(c.rectangle),
+	  2.0f, RED);
+  }
+}
+

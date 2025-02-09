@@ -1,5 +1,5 @@
 #include "Game.h"
-#include "ecs/Registry.h"
+#include <iostream>
 #include "ecs/components/Collider.h"
 
 #define OLDMAN_PATH "res/sprites/old_man.jpeg"
@@ -13,6 +13,8 @@ Game::Game(const WindowOptions& wopt)
 
   m_Textures.emplace_back(std::make_shared<Texture2D>(LoadTexture(OLDMAN_PATH)));
 
+  // ECS 
+  registry.Init();
   InitComponents();
   InitSystems();
   CreateEntities();
@@ -20,76 +22,67 @@ Game::Game(const WindowOptions& wopt)
 
 void Game::Run()
 {
+  std::cout << "STARTING\n";
   while (!WindowShouldClose()) {
 	m_DT = GetFrameTime();
 	ClearBackground(WHITE);
-	
-	m_PhysicsSystem->Update(m_DT);
-	m_CollisionSystem->Update(m_DT);
-	m_PlayerUpdateSystem->Update(m_DT);
 
+	for (const auto& s : m_UpdateSystems)
+	  s->Update(m_DT);
+	
 	BeginDrawing();
 	{
-	  m_RenderSystem->Update(m_DT);
-	  //m_RenderCollidersSystem->Update(m_DT);
+	  for (const auto& s : m_DrawSystems)
+		s->Update(m_DT);
 	}
 	EndDrawing();
   }
 }
 
-void Game::InitComponents()
+void Game::InitComponents() const
 {
-  registry.Init();
-  registry.RegisterComponent<adv::Player>();
-  registry.RegisterComponent<adv::Sprite>();
-  registry.RegisterComponent<adv::Collider>();
-  registry.RegisterComponent<adv::RigidBody>();
-  registry.RegisterComponent<adv::Transform>();
+  registry.RegisterComponent<
+	adv::Player,
+	adv::Sprite,
+	adv::Collider,
+	adv::RigidBody,
+	adv::Transform
+   >();
 }
 
 void Game::InitSystems()
 {
-  m_PhysicsSystem = registry.RegisterSystem<PhysicsSystem>();
-  { 
-	Signature sign;
-	sign.set(registry.GetComponentID<adv::RigidBody>());
-	sign.set(registry.GetComponentID<adv::Transform>());
-	registry.SetSystemSignature<PhysicsSystem>(sign);
-  }
+  m_UpdateSystems = { 
+	registry.CreateSystem<
+	  PhysicsSystem,
+	  adv::RigidBody,
+	  adv::Transform
+	>(),
+	registry.CreateSystem<
+	  CollisionSystem,
+	  adv::Collider,
+	  adv::RigidBody,
+	  adv::Transform
+	>(),
+	registry.CreateSystem<
+	  PlayerUpdateSystem,
+	  adv::Sprite,
+	  adv::Player,
+	  adv::Transform
+	>()
+  };
 
-  m_CollisionSystem = registry.RegisterSystem<CollisionSystem>();
-  { 
-	Signature sign;
-	sign.set(registry.GetComponentID<adv::Collider>());
-	sign.set(registry.GetComponentID<adv::RigidBody>());
-	sign.set(registry.GetComponentID<adv::Transform>());
-	registry.SetSystemSignature<CollisionSystem>(sign);
-  }
-
-  m_RenderSystem = registry.RegisterSystem<RenderSystem>();
-  {
-	Signature sign;
-	sign.set(registry.GetComponentID<adv::Sprite>());
-	sign.set(registry.GetComponentID<adv::Transform>());
-	registry.SetSystemSignature<RenderSystem>(sign);
-  }
-
-  m_RenderCollidersSystem = registry.RegisterSystem<RenderCollidersSystem>();
-  {
-	Signature sign;
-	sign.set(registry.GetComponentID<adv::Collider>());
-	registry.SetSystemSignature<RenderCollidersSystem>(sign);
-  }
-
-  
-  m_PlayerUpdateSystem = registry.RegisterSystem<PlayerUpdateSystem>();
-  {
-	Signature sign;
-	sign.set(registry.GetComponentID<adv::Sprite>());
-	sign.set(registry.GetComponentID<adv::Player>());
-	sign.set(registry.GetComponentID<adv::Transform>());
-	registry.SetSystemSignature<PlayerUpdateSystem>(sign);
-  }
+  m_DrawSystems = {
+	registry.CreateSystem<
+	  RenderSystem,
+	  adv::Sprite,
+	  adv::Transform
+	>(),
+	registry.CreateSystem<
+	  RenderCollidersSystem,
+	  adv::Collider
+	>(),
+  };
 }
 
 void Game::CreateEntities()
