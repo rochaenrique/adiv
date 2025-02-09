@@ -6,6 +6,9 @@
 #include <cmath>
 #include <iostream>
 
+#define PERCENT .4f
+#define SLOP    .01f
+
 extern Registry registry;
 
 namespace adv
@@ -26,7 +29,6 @@ namespace adv
   {
 
 	for (const Collision& col : cols) {
-	  // TODO: distinguish dynamic and non dynamic objects
 	  adv::RigidBody& ar = registry.GetComponent<adv::RigidBody>(col.a);
 	  adv::RigidBody& br = registry.GetComponent<adv::RigidBody>(col.b);
 	  Vector2 avel = ar.velocity;
@@ -34,19 +36,18 @@ namespace adv
 	  Vector2 normal = col.points.normal;
 	  
 	  assert(ar.mass != 0 && br.mass != 0 && "Mass equal to 0!");
-	  float aInvmass = 1.0f / ar.mass;
-	  float bInvmass = 1.0f / br.mass;
+	  float aInvmass = ar.InvMass();
+	  float bInvmass = br.InvMass();
 	  
 	  Vector2 rvel = avel - bvel;
 	  float speed = Vector2DotProduct(rvel, normal);
 	  if (speed >= 0) continue;
-	  
-	  static const float restitution = 1.0f; // TOOD: add restitution
-	  float j = -(1.0f + restitution) * speed / (aInvmass + bInvmass);
 
+	  float restitution = (ar.restitution * br.restitution);
+	  float j = -(1.0f + restitution) * speed / (aInvmass + bInvmass);
 	  Vector2 impulse = normal * j;
-	  avel += impulse * aInvmass;
-	  bvel -= impulse * bInvmass;
+	  if (ar.dynamic) avel += impulse * aInvmass;
+	  if (br.dynamic) bvel -= impulse * bInvmass;
 
 	  // friction
 	  rvel = avel - bvel;
@@ -54,20 +55,25 @@ namespace adv
 	  Vector2 tangent = rvel - normal * speed;
 	  if (Vector2Length(tangent) > 0.0001f) tangent = Vector2Normalize(tangent);
 
+	  float asf = ar.dynamic ? ar.staticFriction  : 0.0f;
+	  float adf = ar.dynamic ? ar.dynamicFriction : 0.0f;
+	  float bsf = br.dynamic ? br.staticFriction  : 0.0f;
+	  float bdf = br.dynamic ? br.dynamicFriction : 0.0f;
+
 	  float fvel = Vector2DotProduct(rvel, tangent);
-	  float mu = Vector2Length({ ar.staticFriction, br.staticFriction });
+	  float mu = Vector2Length({ asf, bsf });
 	  float f = -fvel / (aInvmass + bInvmass);
 	  
 	  Vector2 friction;
 	  if (std::abs(f) < j * mu)
 		friction = tangent * f;
 	  else {
-		mu = Vector2Length({ ar.dynamicFriction, br.dynamicFriction });
+		mu = Vector2Length({ adf, bdf });
 		friction = tangent * -j * mu;
 	  }
 
-	  ar.velocity = avel + friction * aInvmass;
-	  br.velocity = bvel - friction * bInvmass;
+	  if (ar.dynamic) ar.velocity = avel + friction * aInvmass;
+	  if (br.dynamic) br.velocity = bvel - friction * bInvmass;
 	}
   };
 
@@ -78,22 +84,19 @@ namespace adv
 	  adv::RigidBody& br = registry.GetComponent<adv::RigidBody>(col.b);
 	  
 	  assert(ar.mass != 0 && br.mass != 0 && "Mass equal to 0!");
-	  float aInvmass = 1.0f / ar.mass;
-	  float bInvmass = 1.0f / br.mass;
+	  float aInvmass = ar.InvMass();
+	  float bInvmass = br.InvMass();
 	  Vector2 normal = col.points.normal;
 
-	  static const float percent = .4f;
-	  static const float slop = .01f;
-
-	  Vector2 correction = normal * percent
-		* std::fmax(Vector2Length(normal) - slop, 0.0f)
+	  Vector2 correction = normal * PERCENT
+		* std::fmax(Vector2Length(normal) - SLOP, 0.0f)
 		/ (aInvmass + bInvmass);
 
 	  adv::Transform& at = registry.GetComponent<adv::Transform>(col.a);
 	  adv::Transform& bt = registry.GetComponent<adv::Transform>(col.b);
 
-	  at.translation += correction * aInvmass;
-	  bt.translation -= correction * bInvmass;
+	  if (ar.dynamic) at.translation += correction * aInvmass;
+	  if (br.dynamic) bt.translation -= correction * bInvmass;
 	}
   }
 

@@ -98,6 +98,7 @@ void Game::CreateEntities()
 							(float)GetRandomValue(1, 15),
 							(float)GetRandomValue(0, 5),
 							(float)GetRandomValue(0, 5),
+							GetRandomValue(0, 10) / 10.0f,
 							true
 							);
 	CreateSprite(e, oldman, { (float)GetRandomValue(0, width), (float)GetRandomValue(0, height) }, r);
