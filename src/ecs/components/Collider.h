@@ -2,6 +2,7 @@
 #include <raylib.h>
 #include <raymath.h>
 #include <vector>
+#include <functional>
 #include "ecs/ECS.h"
 
 namespace adv
@@ -36,9 +37,20 @@ namespace adv
 	  rectangle.x = c.x;
 	  rectangle.y = c.y;
 	};
+	
+	using CollisionCallback = std::function<void(float)>;
+	void SetCollisionCallback(const CollisionCallback& func)
+	{
+	  onCollision = func;
+	  trigger = true;
+	};
+	bool IsTrigger() const { return trigger; };
 	static CollisionPoints TestCollision(Collider&, Collider&);
 	
 	Rectangle rectangle;
+	CollisionCallback onCollision;
+  private:
+	bool trigger = false;
   };
 
   struct Collision

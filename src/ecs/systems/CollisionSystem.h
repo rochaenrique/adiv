@@ -8,6 +8,7 @@ public:
   void Update(float) override;
   static void ImpulseSolver(std::vector<adv::Collision>&);
   static void PositionSolver(std::vector<adv::Collision>&);
+  static void SendSignals(std::vector<adv::Collision>&, float);
 };
 
 

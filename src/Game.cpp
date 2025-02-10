@@ -169,10 +169,14 @@ void Game::CreateSprite(Entity& e, const std::shared_ptr<Texture2D>&t, const Vec
   float spriteWidth = (float)t->width * .125f;
   Vector2 spriteSize = { spriteWidth, spriteWidth };
   Vector2 realSize = spriteSize * .25f;
+  adv::Collider collider(realSize);
+  collider.SetCollisionCallback([e](float dt) {
+	std::cout << "Collision on entity " << e << ", dt: " << dt <<'\n';
+  });
   
   registry.AddComponent(e, r);
   registry.AddComponent(e, adv::Transform(ipos, realSize, Vector2Zero()));
-  registry.AddComponent(e, adv::Collider(realSize));
+  registry.AddComponent(e, collider);
   registry.AddComponent(e, adv::Sprite(t, { 0, 0, spriteSize.x, spriteSize.y }));
 }
 
@@ -181,9 +185,9 @@ void Game::Demo()
   // player
   auto oldman = m_Textures.at(0);
   Entity player = registry.CreateEntity();
-  Vector2 pInitialPos = m_Window->GetCenter() + Vector2{ 0.0f, 100.0f };
+  Vector2 pInitialPos = Vector2{ m_Window->GetWidth() / 2.0f, m_Window->GetHeight() - 125.0f };
   adv::RigidBody playerRigidBody(Vector2Zero(), Vector2Zero(),
-								 90.0f, .5f, 1.0f, 1.0f, true);
+								 100.0f, 100.0f, 50.0f, 0.01f, true);
   CreateSprite(player, oldman, pInitialPos, playerRigidBody);
   registry.AddComponent(player, adv::Player{});
 

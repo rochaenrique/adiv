@@ -106,7 +106,8 @@ build/PhysicsSystem.o: src/ecs/systems/PhysicsSystem.cpp \
  src/ecs/components/RigidBody.h \
  src/ecs/components/Transform.h src/ecs/Registry.h \
  src/ecs/managers/SystemManager.h src/ecs/managers/EntityManager.h \
- src/ecs/managers/ComponentManager.h src/ecs/managers/ComponentArray.h
+ src/ecs/managers/ComponentManager.h src/ecs/managers/ComponentArray.h \
+ src/util/Helper.h
 	$(CC) $(FLAGS) $(INCLUDES) -c src/ecs/systems/PhysicsSystem.cpp -o $@
 
 build/PlayerSystem.o: src/ecs/systems/PlayerSystem.cpp \

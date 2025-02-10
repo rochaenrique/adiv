@@ -9,7 +9,7 @@
 
 extern Registry registry;
 
-void CollisionSystem::Update(float)
+void CollisionSystem::Update(float dt)
 {
   std::vector<adv::Collision> collisions;
   for (const Entity& a : m_Entities) 
@@ -31,7 +31,8 @@ void CollisionSystem::Update(float)
 	}
 
   ImpulseSolver(collisions);
-  //PositionSolver(collisions);
+  PositionSolver(collisions);
+  SendSignals(collisions, dt);
 }
 
 void CollisionSystem::ImpulseSolver(std::vector<adv::Collision>& cols)
@@ -54,14 +55,8 @@ void CollisionSystem::ImpulseSolver(std::vector<adv::Collision>& cols)
 	float j = -(1.0f + restitution) * speed / (aInvmass + bInvmass);
 	Vector2 impulse = normal * j;
 	
-	if (ar.dynamic) {
-	  ar.velocity += impulse * aInvmass;
-	  std::cout << "SET A TEMP VELOCITY\n";
-	}
-	if (br.dynamic) {
-	  br.velocity -= impulse * bInvmass;
-	  std::cout << "SET B TEMP VELOCITY\n";
-	}
+	if (ar.dynamic) ar.velocity += impulse * aInvmass;
+	if (br.dynamic) br.velocity -= impulse * bInvmass;
 
 	// friction
 	rvel = ar.velocity - br.velocity;
@@ -80,14 +75,8 @@ void CollisionSystem::ImpulseSolver(std::vector<adv::Collision>& cols)
 	  friction = tangent * -j * mu;
 	}
 
-	if (ar.dynamic) {
-	  ar.velocity += friction * aInvmass;
-	  std::cout << "SET A VELOCITY\n";
-	}
-	if (br.dynamic) {
-	  br.velocity -= friction * bInvmass;
-	  std::cout << "SET B VELOCITY\n";
-	}
+	if (ar.dynamic) ar.velocity += friction * aInvmass;
+	if (br.dynamic) br.velocity -= friction * bInvmass;
   }
 }
 
@@ -113,3 +102,19 @@ void CollisionSystem::PositionSolver(std::vector<adv::Collision>& cols)
   }
 }
 
+void CollisionSystem::SendSignals(std::vector<adv::Collision>& cols, float dt)
+{
+  for (const adv::Collision& col : cols) {
+	adv::Collider& ac = registry.GetComponent<adv::Collider>(col.a);
+	adv::Collider& bc = registry.GetComponent<adv::Collider>(col.b);
+
+	if (ac.IsTrigger()) {
+	  assert(ac.onCollision && "Collision marked as trigger has no callback!");
+	  ac.onCollision(dt);
+	}
+	if (bc.IsTrigger()) {
+	  assert(bc.onCollision && "Collision marked as trigger has no callback!");
+	  bc.onCollision(dt);
+	}
+  }
+}
