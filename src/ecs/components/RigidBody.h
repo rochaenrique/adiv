@@ -1,5 +1,6 @@
 #pragma once
 #include <raymath.h>
+#include <iostream>
 
 namespace adv
 {
@@ -23,14 +24,18 @@ namespace adv
 	};
 
 	void AddForce(Vector2 f) { force += f * mass; };
-	void ApplyForces(float dt) {velocity += force * InvMass() * dt; }
-	void ResetForce() { force = Vector2Zero(); };
+	void ApplyForces(float dt) { velocity += force * InvMass() * dt; }
+	void ResetForce()
+	{
+	  lastForce = force;
+	  force = Vector2Zero();
+	};
 	float InvMass() const
 	{
 	  return (mass != 0.0f) ? 1.0f / mass : 0.0f;
 	};
 	
-	Vector2 force, velocity;
+	Vector2 force, velocity, lastForce = Vector2Zero();
 	float mass, staticFriction, dynamicFriction, restitution;
 	bool dynamic;
   };

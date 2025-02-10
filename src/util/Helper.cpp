@@ -1,4 +1,5 @@
 #include "Helper.h"
+#include <iomanip>
 
 namespace adv
 {
@@ -40,10 +41,43 @@ namespace adv
   void ToLeft(adv::Transform& t, float x)
   {
 	t.translation.x = x + t.scale.x / 2.0f;
-  };
+  }
 
   void ToRight(adv::Transform& t, float x)
   {
 	t.translation.x = x - t.scale.x / 2.0f;
-  };
+  }
+
+  float IsWorldUp(Vector2 v)
+  {
+	return Vector2DotProduct(v, WORLD_UP);
+  }
+	
+  bool IsWorldDown(Vector2 v)
+  {
+	return Vector2DotProduct(v, WORLD_DOWN) >= 0;
+  }
+	
+  bool IsWorldLeft(Vector2 v)
+  {
+	return Vector2DotProduct(v, WORLD_LEFT) >= 0;
+  }
+
+  bool IsWorldRight(Vector2 v)
+  {
+	return Vector2DotProduct(v, WORLD_RIGHT) >= 0;
+  }
 }
+
+std::ostream& operator<<(std::ostream& os, const Vector2& vec)
+{
+  os << "(" << vec.x << ", " << vec.y << ")" << std::setprecision(3);
+  return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const adv::RigidBody& rb)
+{
+  os << "F: " << rb.force << ", Last F: " << rb.lastForce << ", Vel: " << rb.velocity;
+  return os;
+}
+

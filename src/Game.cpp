@@ -8,7 +8,7 @@
 #include "util/Helper.h"
 
 #define SPRITE_DIR  "res/sprites"
-#define OLDMAN_PATH SPRITE_DIR"/old_man.jpeg"
+#define OLDMAN_PATH SPRITE_DIR"/old_man.png"
 #define TILES_PATH  SPRITE_DIR"/tiles.png"
 
 Registry registry;
@@ -26,8 +26,8 @@ Game::Game(const WindowOptions& wopt)
   InitSystems();
   //CreateEntities();
 
-  // TODO REMOVE
-  Demo();
+
+  Demo(); // TODO REMOVE
 }
 
 void Game::Run()
@@ -41,10 +41,10 @@ void Game::Run()
 	  s->Update(m_DT);
 	
 	BeginDrawing();
-	{
+	  BeginBlendMode(BLEND_ALPHA);
 	  for (const auto& s : m_DrawSystems)
 		s->Update(m_DT);
-	}
+	  EndBlendMode();
 	EndDrawing();
   }
 }
@@ -99,17 +99,25 @@ void Game::InitSystems()
 	Signature sign;
 	sign.set(registry.GetComponentID<adv::Sprite>());
 	sign.set(registry.GetComponentID<adv::Transform>());
-	registry.SetSystemSignature<PhysicsSystem>(sign);
+	registry.SetSystemSignature<RenderSystem>(sign);
   }
-
+  
+  auto renderCollidersSystem  = registry.RegisterSystem<RenderCollidersSystem>();
+  {
+	Signature sign;
+	sign.set(registry.GetComponentID<adv::Collider>());
+	registry.SetSystemSignature<RenderCollidersSystem>(sign);
+  }
+  
   m_UpdateSystems = {
-	physicsSystem,
-	collisionSystem,
 	playerSystem,
+	collisionSystem,
+	physicsSystem,
   };
 
   m_DrawSystems = {
 	renderSystem,
+	// renderCollidersSystem,
   };
 
   // m_UpdateSystems = { 
@@ -180,11 +188,11 @@ void Game::Demo()
   registry.AddComponent(player, adv::Player{});
 
   // second, for testing
-  Entity second = registry.CreateEntity();
-  Vector2 secondInitialPos = pInitialPos + Vector2{ 0.0f, 100.0f };
-  adv::RigidBody secondRigidBody = playerRigidBody;
-  secondRigidBody.AddForce({ 0.0f, -100.0f });
-  CreateSprite(second, oldman, secondInitialPos, secondRigidBody);
+  // Entity second = registry.CreateEntity();
+  // Vector2 secondInitialPos = pInitialPos + Vector2{ 0.0f, 100.0f };
+  // adv::RigidBody secondRigidBody = playerRigidBody;
+  // secondRigidBody.AddForce({ 0.0f, -100.0f });
+  // CreateSprite(second, oldman, secondInitialPos, secondRigidBody);
 
   // tiles
   auto tiles = m_Textures.at(1);

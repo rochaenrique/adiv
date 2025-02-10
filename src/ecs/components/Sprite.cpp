@@ -11,7 +11,7 @@ namespace adv
 	}
   }
 
-  void Sprite::IncrementSlotIndex(int i)
+  void Sprite::IncrementSlotIndex(int)
   {
 	// size_t total = texture->width / source.width;
 	// i += GetSlotIndex();

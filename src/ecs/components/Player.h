@@ -2,5 +2,7 @@
 
 namespace adv
 {
-  struct Player {};
+  struct Player
+  {
+  };
 }
