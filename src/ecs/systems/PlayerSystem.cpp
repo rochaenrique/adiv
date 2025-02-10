@@ -9,7 +9,7 @@
 #include "util/Helper.h"
 
 #define VERT_MULT 100000.0f
-#define HOR_MULT  50.0f
+#define HOR_MULT  5000.0f
 
 extern Registry registry;
 
