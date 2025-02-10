@@ -154,24 +154,23 @@ void Game::InitSystems()
 
 void Game::CreateEntities()
 {
-  unsigned width = m_Window->GetWidth();
-  unsigned height = m_Window->GetHeight();
-  auto oldman = m_Textures.at(0);
-  
-  for (Entity& e : m_Entities) {
-	e = registry.CreateEntity();
-	CreateSprite(e, oldman, adv::RandomVector2(width, height), adv::RandomRigidBody());
-  }
 }
 
-void Game::CreateSprite(Entity& e, const std::shared_ptr<Texture2D>&t, const Vector2 ipos, const adv::RigidBody& r)
+void Game::CreatePlayer(Entity& e, const std::shared_ptr<Texture2D>&t, const Vector2 ipos, const adv::RigidBody& r)
 {
   float spriteWidth = (float)t->width * .125f;
   Vector2 spriteSize = { spriteWidth, spriteWidth };
   Vector2 realSize = spriteSize * .25f;
+  adv::Player playerComp;
+  registry.AddComponent(e, playerComp);
+	
   adv::Collider collider(realSize);
-  collider.SetCollisionCallback([e](float dt) {
-	std::cout << "Collision on entity " << e << ", dt: " << dt <<'\n';
+  collider.SetCollisionCallback([](const adv::Collision& col, float) {
+	auto pa = registry.RiskyGetComponent<adv::Player>(col.a);
+	auto pb = registry.RiskyGetComponent<adv::Player>(col.b);
+	
+	if (pa) pa->SetJumping(false);
+	else if (pb) pb->SetJumping(false);
   });
   
   registry.AddComponent(e, r);
@@ -188,15 +187,7 @@ void Game::Demo()
   Vector2 pInitialPos = Vector2{ m_Window->GetWidth() / 2.0f, m_Window->GetHeight() - 125.0f };
   adv::RigidBody playerRigidBody(Vector2Zero(), Vector2Zero(),
 								 100.0f, 100.0f, 50.0f, 0.01f, true);
-  CreateSprite(player, oldman, pInitialPos, playerRigidBody);
-  registry.AddComponent(player, adv::Player{});
-
-  // second, for testing
-  // Entity second = registry.CreateEntity();
-  // Vector2 secondInitialPos = pInitialPos + Vector2{ 0.0f, 100.0f };
-  // adv::RigidBody secondRigidBody = playerRigidBody;
-  // secondRigidBody.AddForce({ 0.0f, -100.0f });
-  // CreateSprite(second, oldman, secondInitialPos, secondRigidBody);
+  CreatePlayer(player, oldman, pInitialPos, playerRigidBody);
 
   // tiles
   auto tiles = m_Textures.at(1);

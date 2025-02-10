@@ -110,11 +110,11 @@ void CollisionSystem::SendSignals(std::vector<adv::Collision>& cols, float dt)
 
 	if (ac.IsTrigger()) {
 	  assert(ac.onCollision && "Collision marked as trigger has no callback!");
-	  ac.onCollision(dt);
+	  ac.onCollision(col, dt);
 	}
 	if (bc.IsTrigger()) {
 	  assert(bc.onCollision && "Collision marked as trigger has no callback!");
-	  bc.onCollision(dt);
+	  bc.onCollision(col, dt);
 	}
   }
 }

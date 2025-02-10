@@ -25,7 +25,7 @@ private:
   void InitComponents() const;
   void InitSystems();
   void CreateEntities();
-  static void CreateSprite(Entity&, const std::shared_ptr<Texture2D>&, const Vector2, const adv::RigidBody&);
+  static void CreatePlayer(Entity&, const std::shared_ptr<Texture2D>&, const Vector2, const adv::RigidBody&);
   
   void Demo(); // TODO: Remove
 };

@@ -36,6 +36,9 @@ public:
   
   template<typename T>
   T& Get(Entity e) { return GetArray<T>()->Get(e); }
+  
+  template<typename T>
+  std::optional<T> RiskyGet(Entity e) { return GetArray<T>()->RiskyGet(e); }
 
   void Destroy(Entity);
 

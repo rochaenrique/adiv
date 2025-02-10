@@ -81,3 +81,9 @@ std::ostream& operator<<(std::ostream& os, const adv::RigidBody& rb)
   return os;
 }
 
+std::ostream& operator<<(std::ostream& os, const adv::Player& p)
+{
+  os << "Jumping: " << p.IsJumping();
+  return os;
+}
+

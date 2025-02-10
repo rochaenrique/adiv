@@ -18,6 +18,12 @@ namespace adv
 	bool collided;
   };
 
+  struct Collision
+  {
+	Entity a, b;
+	CollisionPoints points;
+  };
+
   class Collider
   {
   public:
@@ -39,7 +45,7 @@ namespace adv
 	  rectangle.y = c.y;
 	};
 	
-	using CollisionCallback = std::function<void(float)>;
+	using CollisionCallback = std::function<void(const adv::Collision&, float)>;
 	void SetCollisionCallback(const CollisionCallback& func)
 	{
 	  onCollision = func;
@@ -54,9 +60,4 @@ namespace adv
 	bool trigger = false;
   };
 
-  struct Collision
-  {
-	Entity a, b;
-	CollisionPoints points;
-  };
 }

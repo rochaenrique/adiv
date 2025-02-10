@@ -19,7 +19,7 @@
 [x] Physics Engine Implementation
 [x] Rectangle Collider Detector Implementation
 [x] Collision Responder
-[ ] General basic player movement
+[x] General basic player movement
 [ ] Player sprite animations
 [ ] Map loader with textures
 [ ] First level with obstacles

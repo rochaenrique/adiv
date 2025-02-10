@@ -54,6 +54,9 @@ public:
   T& GetComponent(Entity e) { return m_CM->Get<T>(e); }
   
   template<typename T>
+  std::optional<T> RiskyGetComponent(Entity e) { return m_CM->RiskyGet<T>(e); }
+  
+  template<typename T>
   ComponentID GetComponentID() { return m_CM->GetID<T>(); }
   
   template<typename T>

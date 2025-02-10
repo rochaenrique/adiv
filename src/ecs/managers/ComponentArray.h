@@ -3,6 +3,7 @@
 #include <array>
 #include <unordered_map>
 #include <cassert>
+#include <optional>
 
 class IComponentArray
 {
@@ -47,6 +48,13 @@ public:
   T& Get(Entity e)
   {
 	assert(m_Entity2Index.find(e) != m_Entity2Index.end() && "Non-existent component");
+	return m_Components[m_Entity2Index[e]];
+  }
+
+  std::optional<T> RiskyGet(Entity e)
+  {
+	if (m_Entity2Index.find(e) == m_Entity2Index.end())
+	  return {};
 	return m_Components[m_Entity2Index[e]];
   }
 
