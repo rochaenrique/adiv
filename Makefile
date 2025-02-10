@@ -117,7 +117,7 @@ build/PlayerSystem.o: src/ecs/systems/PlayerSystem.cpp \
  src/ecs/managers/ComponentManager.h src/ecs/managers/ComponentArray.h \
  src/ecs/components/RigidBody.h \
  src/ecs/components/Transform.h \
- src/util/Helper.h 
+ src/util/Helper.h src/Animation.h
 	$(CC) $(FLAGS) $(INCLUDES) -c src/ecs/systems/PlayerSystem.cpp -o $@
 
 build/RenderCollidersSystem.o: src/ecs/systems/RenderCollidersSystem.cpp \

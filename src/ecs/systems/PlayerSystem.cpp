@@ -1,6 +1,5 @@
 #include "PlayerSystem.h"
 #include <iostream>
-#include <raylib.h>
 #include "util/Helper.h"
 #include <cmath>
 #include "ecs/Registry.h"
@@ -22,10 +21,10 @@
 #define STANDING_INDEX   27
 
 extern Registry registry;
-extern size_t playerIndex;
+extern float playerIndex;
 
-void PlayerSystem::Update(float)
-{
+void PlayerSystem::Update(float dt)
+{ 
   for (const Entity& e : m_Entities) {
 	if (IsKeyPressed(KEY_R)) { // TODO: TEMPORARY FOR TESTING
 	  adv::Transform& t = registry.GetComponent<adv::Transform>(e);
@@ -71,16 +70,8 @@ void PlayerSystem::Update(float)
 	  body.ApplyAcc(step);
 
 	  // TODO: REMOVE (TEST)
-
-	  if (IsKeyPressed(KEY_Q)) {
-		std::cout << "Attempting IncrementIndex\n";
-		sprite.IncrementIndex();
-	  }
-	  if (IsKeyPressed(KEY_E)) {
-		std::cout << "Attempting DecrementIndex\n";
-		sprite.DecrementIndex();
-	  }
-	  playerIndex = sprite.GetIndex();
+	  m_Animation.Update(dt);
+	  std::cout << "Animation Value: " << (playerIndex = m_Animation.Value()) << '\n';
 	}
   }
 }

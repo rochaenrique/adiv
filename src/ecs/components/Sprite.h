@@ -2,7 +2,6 @@
 #include <raylib.h>
 #include <raymath.h>
 #include <memory>
-#include <iostream>
 #include <cmath>
 
 namespace adv
@@ -19,7 +18,6 @@ namespace adv
 	{
 	  m_Source = { 0, 0, sz.x, sz.y };
 	  m_Grid = { std::floor(t->width / sz.x), std::floor(t->height / sz.y) };
-	  std::cout << "Grid is: (" << m_Grid.x << ", " << m_Grid.y << ")\n";
 	  
 	  if (IsInRange(i)) {
 		m_Index = i;
@@ -31,11 +29,9 @@ namespace adv
 	bool SetIndex(size_t i)
 	{
 	  if (IsInRange(i)) {
-		std::cout << "Setting index!\n";
 		m_Index = i;
 		ReCalcSource();
-	  } else
-		std::cout << "Not in range!\n";
+	  }
 	  return i == m_Index;
 	}
 	
@@ -65,15 +61,12 @@ namespace adv
 
 	bool IsInRange(size_t i) const
 	{
-	  std::cout << "Texting range\n";
 	  return i < (m_Grid.x * m_Grid.y);
 	};
 	void ReCalcSource()
 	{
 	  m_Source.x = (m_Index % (size_t)m_Grid.x) * m_Source.width;
 	  m_Source.y = (m_Index / (size_t)m_Grid.x) * m_Source.height;
-	  std::cout << "Index -> " << m_Index << ", src -> (" <<
-		m_Source.x << ", " << m_Source.y << ")\n";
 	}
   };
 }

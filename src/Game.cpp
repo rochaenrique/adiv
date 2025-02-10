@@ -2,6 +2,7 @@
 #include <iostream>
 #include <format>
 #include <cstdio>
+#include "Animation.h"
 #include "ecs/Systems.h"
 #include "ecs/Components.h"
 #include "util/Random.h"
@@ -12,7 +13,7 @@
 #define TILES_PATH  SPRITE_DIR"/tiles.png"
 
 Registry registry;
-size_t playerIndex;
+float playerIndex;
 
 Game::Game(const WindowOptions& wopt)
 {
@@ -45,7 +46,7 @@ void Game::Run()
 	  DrawFPS(0, 0);
 
 	  // TEMPORARY
-	  DrawText(TextFormat("Player Sprite Index: %d", playerIndex),
+	  DrawText(TextFormat("Player Animation: %f", playerIndex),
 			   center.x, center.y, 20, WHITE);
 	  BeginBlendMode(BLEND_ALPHA);
 	  for (const auto& s : m_DrawSystems)
@@ -106,6 +107,19 @@ void Game::InitSystems()
 	sign.set(registry.GetComponentID<adv::Collider>());
 	registry.SetSystemSignature<RenderCollidersSystem>(sign);
   }
+
+  playerSystem->m_Animation = adv::Animation({
+	  {
+		.from	  = 100.0f,
+		.to		  = 0.0f,
+		.duration = 10.0f 
+	  },
+	  {
+		.from	  = 25.0f,
+		.to		  = 50.0f,
+		.duration = 50.0f 
+	  },
+	}, true);
   
   m_UpdateSystems = {
 	playerSystem,
