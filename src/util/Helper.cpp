@@ -53,19 +53,19 @@ namespace adv
 	return Vector2DotProduct(v, WORLD_UP);
   }
 	
-  bool IsWorldDown(Vector2 v)
+  float IsWorldDown(Vector2 v)
   {
-	return Vector2DotProduct(v, WORLD_DOWN) >= 0;
+	return Vector2DotProduct(v, WORLD_DOWN);
   }
 	
-  bool IsWorldLeft(Vector2 v)
+  float IsWorldLeft(Vector2 v)
   {
-	return Vector2DotProduct(v, WORLD_LEFT) >= 0;
+	return Vector2DotProduct(v, WORLD_LEFT);
   }
 
-  bool IsWorldRight(Vector2 v)
+  float IsWorldRight(Vector2 v)
   {
-	return Vector2DotProduct(v, WORLD_RIGHT) >= 0;
+	return Vector2DotProduct(v, WORLD_RIGHT);
   }
 }
 

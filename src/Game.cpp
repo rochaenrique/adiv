@@ -12,6 +12,7 @@
 #define TILES_PATH  SPRITE_DIR"/tiles.png"
 
 Registry registry;
+size_t playerIndex;
 
 Game::Game(const WindowOptions& wopt)
 {
@@ -20,12 +21,11 @@ Game::Game(const WindowOptions& wopt)
 
   m_Textures.emplace_back(std::make_shared<Texture2D>(LoadTexture(OLDMAN_PATH)));
   m_Textures.emplace_back(std::make_shared<Texture2D>(LoadTexture(TILES_PATH)));
+  
   // ECS 
   registry.Init();
   InitComponents();
   InitSystems();
-  //CreateEntities();
-
 
   Demo(); // TODO REMOVE
 }
@@ -33,6 +33,7 @@ Game::Game(const WindowOptions& wopt)
 void Game::Run()
 {
   std::cout << "STARTING\n";
+  Vector2 center = m_Window->GetCenter();
   while (!WindowShouldClose()) {
 	m_DT = GetFrameTime();
 	ClearBackground(SKYBLUE);
@@ -41,6 +42,11 @@ void Game::Run()
 	  s->Update(m_DT);
 	
 	BeginDrawing();
+	  DrawFPS(0, 0);
+
+	  // TEMPORARY
+	  DrawText(TextFormat("Player Sprite Index: %d", playerIndex),
+			   center.x, center.y, 20, WHITE);
 	  BeginBlendMode(BLEND_ALPHA);
 	  for (const auto& s : m_DrawSystems)
 		s->Update(m_DT);
@@ -51,14 +57,6 @@ void Game::Run()
 
 void Game::InitComponents() const
 {
-  // registry.RegisterComponent<
-  // 	adv::Player,
-  // 	adv::Sprite,
-  // 	adv::Collider,
-  // 	adv::RigidBody,
-  // 	adv::Transform
-  //  >();
-
   registry.RegisterComponent<adv::Player>();
   registry.RegisterComponent<adv::Sprite>();
   registry.RegisterComponent<adv::Collider>();
@@ -119,41 +117,6 @@ void Game::InitSystems()
 	renderSystem,
 	// renderCollidersSystem,
   };
-
-  // m_UpdateSystems = { 
-  // 	registry.CreateSystem<
-  // 	  PhysicsSystem,
-  // 	  adv::RigidBody,
-  // 	  adv::Transform
-  // 	>(),
-  // 	registry.CreateSystem<
-  // 	  CollisionSystem,
-  // 	  adv::Collider,
-  // 	  adv::RigidBody,
-  // 	  adv::Transform
-  // 	>(),
-  // 	registry.CreateSystem<
-  // 	  PlayerSystem,
-  // 	  adv::Sprite,
-  // 	  adv::Player,
-  // 	  adv::RigidBody,
-  // 	>()
-  // };
-  // m_DrawSystems = {
-  // 	registry.CreateSystem<
-  // 	  RenderSystem,
-  // 	  adv::Sprite,
-  // 	  adv::Transform
-  // 	>(),
-  // 	// registry.CreateSystem<
-  // 	//   RenderCollidersSystem,
-  // 	//   adv::Collider
-  // 	// >(),
-  // };
-}
-
-void Game::CreateEntities()
-{
 }
 
 void Game::CreatePlayer(Entity& e, const std::shared_ptr<Texture2D>&t, const Vector2 ipos, const adv::RigidBody& r)
@@ -176,7 +139,7 @@ void Game::CreatePlayer(Entity& e, const std::shared_ptr<Texture2D>&t, const Vec
   registry.AddComponent(e, r);
   registry.AddComponent(e, adv::Transform(ipos, realSize, Vector2Zero()));
   registry.AddComponent(e, collider);
-  registry.AddComponent(e, adv::Sprite(t, { 0, 0, spriteSize.x, spriteSize.y }));
+  registry.AddComponent(e, adv::Sprite(t, spriteSize, 0));
 }
 
 void Game::Demo()
@@ -192,9 +155,8 @@ void Game::Demo()
   // tiles
   auto tiles = m_Textures.at(1);
   Vector2 tileTexSize = { tiles->width * .1f, tiles->height / 6.0f };
-  Rectangle src = { tileTexSize.x * 3.0f, tileTexSize.y * 4.0f, tileTexSize.x, tileTexSize.y };
 
-  const int tileAmount = 10;
+  const int tileAmount = 10;  
   m_Entities.resize(tileAmount);
   
   Vector2 tileSize = { (float)m_Window->GetWidth() / tileAmount, m_Window->GetHeight() * .10f };
@@ -209,8 +171,10 @@ void Game::Demo()
 	  transform.translation.y << ")\n";
 	
 	registry.AddComponent(m_Entities[i], adv::RigidBody::CreateStatic(10.0f, 5.0f));
-	registry.AddComponent(m_Entities[i], adv::Sprite(tiles, src));
+	registry.AddComponent(m_Entities[i], adv::Sprite(tiles, tileTexSize, 43));
 	registry.AddComponent(m_Entities[i], transform);
 	registry.AddComponent(m_Entities[i], adv::Collider(tileSize));
   }
+
+  playerIndex = 0;
 }

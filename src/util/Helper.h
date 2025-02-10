@@ -20,9 +20,9 @@ namespace adv
   void ToRight(adv::Transform&, float);
 
   float IsWorldUp(Vector2); 
-  bool IsWorldDown(Vector2);
-  bool IsWorldLeft(Vector2);
-  bool IsWorldRight(Vector2);
+  float IsWorldDown(Vector2);
+  float IsWorldLeft(Vector2);
+  float IsWorldRight(Vector2);
 }
 
 std::ostream& operator<<(std::ostream&, const Vector2&);

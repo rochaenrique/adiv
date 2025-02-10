@@ -71,8 +71,8 @@ build/Collider.o: src/ecs/components/Collider.cpp src/ecs/components/Collider.h 
  src/util/Helper.h
 	$(CC) $(FLAGS) $(INCLUDES) -c src/ecs/components/Collider.cpp -o $@
 
-build/Sprite.o: src/ecs/components/Sprite.cpp src/ecs/components/Sprite.h 
-	$(CC) $(FLAGS) $(INCLUDES) -c src/ecs/components/Sprite.cpp -o $@
+# build/Sprite.o: src/ecs/components/Sprite.cpp src/ecs/components/Sprite.h 
+# 	$(CC) $(FLAGS) $(INCLUDES) -c src/ecs/components/Sprite.cpp -o $@
 
 build/ComponentManager.o: src/ecs/managers/ComponentManager.cpp \
  src/ecs/managers/ComponentManager.h src/ecs/ECS.h \
