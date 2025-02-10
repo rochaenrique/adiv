@@ -10,7 +10,7 @@ void PhysicsSystem::Update(float dt)
 {
   for (const Entity& e : m_Entities) {
 	adv::RigidBody& rb = registry.GetComponent<adv::RigidBody>(e);
-	if (!rb.dynamic)
+	if (!rb.IsDynamic())
 	  continue;
 	StepBody(
 			 rb,
@@ -22,9 +22,8 @@ void PhysicsSystem::Update(float dt)
 
 void PhysicsSystem::StepBody(adv::RigidBody& rb, adv::Transform& t, float dt)
 {
-  rb.ApplyForce(G);
-  std::cout << "Body to update: " << rb << '\n';
-  rb.ResolveForces(dt);
-  t.Displace(rb.velocity * dt);
+  rb.ApplyAcc(G);
+ rb.ResolveForces(dt);
+  t.Displace(rb.GetVelocity() * dt);
   rb.ResetForce();
 }

@@ -18,8 +18,9 @@ namespace adv
 	bool collided;
   };
 
-  struct Collider
+  class Collider
   {
+  public:
 	Collider()
 	  : rectangle{0, 0, 0, 0} {};
 	

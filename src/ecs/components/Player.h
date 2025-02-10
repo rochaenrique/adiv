@@ -2,7 +2,12 @@
 
 namespace adv
 {
-  struct Player
+  class Player
   {
+  public:
+	void SetJumping(bool b) { jumping = b; };
+	bool IsJumping() const { return jumping; }
+  private:
+	bool jumping = false;
   };
 }

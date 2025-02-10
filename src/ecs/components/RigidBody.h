@@ -4,8 +4,9 @@
 
 namespace adv
 {
-  struct RigidBody
+  class RigidBody
   {
+  public:
   RigidBody()
 	: force{Vector2Zero()}, velocity{Vector2Zero()},
 	  mass{1.0f}, staticFriction{0}, dynamicFriction{0}, restitution{1.0f},
@@ -23,18 +24,42 @@ namespace adv
 	  return RigidBody(Vector2Zero(), Vector2Zero(), 0.0f, sf, df, 1.0f, false);
 	};
 
-	void AddForce(Vector2 f) { force += f * mass; };
-	void ApplyForces(float dt) { velocity += force * InvMass() * dt; }
+	void ApplyForce(Vector2 f)
+	{
+	  force += f;
+	};
+	void ApplyAcc(Vector2 a)
+	{
+	  force += a * mass;
+	};
+	void ResolveForces(float dt)
+	{
+	  velocity += force * InvMass() * dt;
+	}
 	void ResetForce()
 	{
 	  lastForce = force;
 	  force = Vector2Zero();
 	};
-	float InvMass() const
+
+	void ApplyVelocity(Vector2 v)
 	{
-	  return (mass != 0.0f) ? 1.0f / mass : 0.0f;
+	  velocity += v;
 	};
 	
+	Vector2 GetForce() const { return force; }	
+	Vector2 GetVelocity() const { return velocity; }
+	Vector2 GetLastForce() const { return lastForce; }
+
+	float GetMass() const { return mass; }
+	float InvMass() const { return (mass != 0.0f) ? (1.0f / mass) : 0.0f; }
+
+	float GetStaticFriction() const { return staticFriction; }
+	float GetDynamicFriction() const { return dynamicFriction; }
+	float GetRestitution() const { return restitution; }
+
+	bool IsDynamic() { return dynamic; };
+  private:	
 	Vector2 force, velocity, lastForce = Vector2Zero();
 	float mass, staticFriction, dynamicFriction, restitution;
 	bool dynamic;

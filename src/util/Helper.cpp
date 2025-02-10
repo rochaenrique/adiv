@@ -77,7 +77,7 @@ std::ostream& operator<<(std::ostream& os, const Vector2& vec)
 
 std::ostream& operator<<(std::ostream& os, const adv::RigidBody& rb)
 {
-  os << "F: " << rb.force << ", Last F: " << rb.lastForce << ", Vel: " << rb.velocity;
+  os << "F: " << rb.GetForce() << ", Last F: " << rb.GetLastForce() << ", Vel: " << rb.GetVelocity();
   return os;
 }
 

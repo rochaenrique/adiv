@@ -5,8 +5,9 @@
 
 namespace adv
 {
-  struct Sprite
+  class Sprite
   {
+  public:
   Sprite()
 	: texture{nullptr}, source{0, 0, 0, 0}
 	{};
@@ -14,10 +15,14 @@ namespace adv
 	: texture{t}, source{s}
 	{};
 	
-	std::shared_ptr<Texture2D> texture;
-	Rectangle source;
 	void IncrementSlotIndex(int);
 	size_t GetSlotIndex();
 	void SetSlotIndex(size_t);
+
+	const std::shared_ptr<Texture2D> GetTexture() const { return texture; }
+	const Rectangle& GetSource() const { return source; }
+  private:
+	std::shared_ptr<Texture2D> texture;
+	Rectangle source;
   };
 }

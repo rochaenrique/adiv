@@ -46,24 +46,24 @@ void CollisionSystem::ImpulseSolver(std::vector<adv::Collision>& cols)
 	float bInvmass = br.InvMass();
 
 	// impulse
-	Vector2 rvel = ar.velocity - br.velocity;
+	Vector2 rvel = ar.GetVelocity() - br.GetVelocity();
 	float speed = Vector2DotProduct(rvel, normal);
 	if (speed >= 0)
 	  continue;
 
-	float restitution = (ar.restitution * br.restitution);
+	float restitution = (ar.GetRestitution() * br.GetRestitution());
 	float j = -(1.0f + restitution) * speed / (aInvmass + bInvmass);
 	Vector2 impulse = normal * j;
 	
-	if (ar.dynamic) ar.velocity += impulse * aInvmass;
-	if (br.dynamic) br.velocity -= impulse * bInvmass;
+	if (ar.IsDynamic()) ar.ApplyVelocity(impulse * aInvmass);
+	if (br.IsDynamic()) br.ApplyVelocity(impulse * -bInvmass);
 
 	// friction
-	rvel = ar.velocity - br.velocity;
+	rvel = ar.GetVelocity() - br.GetVelocity();
 	speed = Vector2DotProduct(rvel, normal);
 	Vector2 tangent = Vector2Normalize(rvel - normal * speed);
 	
-	float mu = Vector2Length({ ar.staticFriction, br.staticFriction });
+	float mu = Vector2Length({ ar.GetStaticFriction(), br.GetStaticFriction() });
 	float fvel = Vector2DotProduct(rvel, tangent);
 	float f = -fvel / (aInvmass + bInvmass);
 	
@@ -71,12 +71,12 @@ void CollisionSystem::ImpulseSolver(std::vector<adv::Collision>& cols)
 	if (std::abs(f) < j * mu)
 	  friction = tangent * f;
 	else {
-	  mu = Vector2Length({ ar.dynamicFriction, br.dynamicFriction });
+	  mu = Vector2Length({ ar.GetDynamicFriction(), br.GetDynamicFriction() });
 	  friction = tangent * -j * mu;
 	}
 
-	if (ar.dynamic) ar.velocity += friction * aInvmass;
-	if (br.dynamic) br.velocity -= friction * bInvmass;
+	if (ar.IsDynamic()) ar.ApplyVelocity(friction * aInvmass);
+	if (br.IsDynamic()) br.ApplyVelocity(friction * -bInvmass);
   }
 }
 
@@ -97,8 +97,8 @@ void CollisionSystem::PositionSolver(std::vector<adv::Collision>& cols)
 	adv::Transform& at = registry.GetComponent<adv::Transform>(col.a);
 	adv::Transform& bt = registry.GetComponent<adv::Transform>(col.b);
 
-	if (ar.dynamic) at.translation += correction * aInvmass;
-	if (br.dynamic) bt.translation -= correction * bInvmass;
+	if (ar.IsDynamic()) at.translation += correction * aInvmass;
+	if (br.IsDynamic()) bt.translation -= correction * bInvmass;
   }
 }
 
