@@ -2,6 +2,7 @@
 #include <memory>
 #include <raylib.h>
 #include "Window.h"
+#include "MapLoader.h"
 #include "ecs/ECS.h"
 #include "ecs/Registry.h"
 #include "ecs/Systems.h"
@@ -14,8 +15,10 @@ public:
   void Run();
 private:
   float m_DT = 0.0f;
+  
   std::unique_ptr<Window> m_Window;
-  // std::array<Entity, MAX_ENTITIES> m_Entities {};
+  std::unique_ptr<MapLoader> m_MapLoader;
+
   std::vector<Entity> m_Entities {};
   std::vector<std::shared_ptr<Texture2D>> m_Textures {};
 

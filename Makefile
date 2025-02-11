@@ -39,7 +39,8 @@ src/ecs/systems/RenderSystem.cpp \
 src/Game.cpp \
 src/main.cpp \
 src/util/Helper.cpp \
-src/Window.cpp
+src/Window.cpp \
+src/MapLoader.cpp
 
 OBJECTS = \
 build/Collider.o \
@@ -56,7 +57,8 @@ build/RenderSystem.o \
 build/Game.o \
 build/main.o \
 build/Helper.o \
-build/Window.o
+build/Window.o \
+build/MapLoader.o
 
 $(EXECUTABLE): $(OBJECTS)
 	$(CC) $(FLAGS) $(OBJECTS) $(INCLUDES) $(LIB_DIRS) $(LIBS) -o $@
@@ -141,7 +143,7 @@ build/RenderSystem.o: src/ecs/systems/RenderSystem.cpp \
 	$(CC) $(FLAGS) $(INCLUDES) -c src/ecs/systems/RenderSystem.cpp -o $@
 
 build/Game.o: src/Game.cpp src/Game.h \
- src/Window.h \
+ src/Window.h src/MapLoader.h \
  src/ecs/ECS.h src/ecs/Registry.h src/ecs/managers/SystemManager.h \
  src/ecs/managers/EntityManager.h src/ecs/managers/ComponentManager.h \
  src/ecs/managers/ComponentArray.h src/ecs/Systems.h \
@@ -176,6 +178,9 @@ build/Helper.o: src/util/Helper.cpp src/util/Helper.h \
 
 build/Window.o: src/Window.cpp src/Window.h 
 	$(CC) $(FLAGS) $(INCLUDES) -c src/Window.cpp -o $@
+
+build/MapLoader.o: src/MapLoader.cpp src/MapLoader.h 
+	$(CC) $(FLAGS) $(INCLUDES) -c src/MapLoader.cpp -o $@
 
 .PHONY : clean
 clean:

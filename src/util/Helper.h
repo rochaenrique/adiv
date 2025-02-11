@@ -23,6 +23,10 @@ namespace adv
   float IsWorldDown(Vector2);
   float IsWorldLeft(Vector2);
   float IsWorldRight(Vector2);
+
+  Vector2 ToVector2(const std::string&);
+  Vector2 ToVector2(std::string::iterator&, const std::string::iterator);
+  
 }
 
 std::ostream& operator<<(std::ostream&, const Vector2&);

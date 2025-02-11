@@ -20,6 +20,9 @@ Game::Game(const WindowOptions& wopt)
   m_Window = std::unique_ptr<Window>(Window::Create(wopt));
   m_Window->Init();
 
+  m_MapLoader = std::make_unique<MapLoader>("res/maps");
+  m_MapLoader->LoadFile("level1");
+
   m_Textures.emplace_back(std::make_shared<Texture2D>(LoadTexture(OLDMAN_PATH)));
   m_Textures.emplace_back(std::make_shared<Texture2D>(LoadTexture(TILES_PATH)));
   
@@ -27,6 +30,7 @@ Game::Game(const WindowOptions& wopt)
   registry.Init();
   InitComponents();
   InitSystems();
+
 
   Demo(); // TODO REMOVE
 }
@@ -44,7 +48,7 @@ void Game::Run()
 	
 	BeginDrawing();
 	  DrawFPS(0, 0);
-
+	  
 	  // TEMPORARY
 	  DrawText(TextFormat("Player Animation: %f", playerIndex),
 			   center.x, center.y, 20, WHITE);
@@ -159,35 +163,36 @@ void Game::CreatePlayer(Entity& e, const std::shared_ptr<Texture2D>&t, const Vec
 void Game::Demo()
 {
   // player
+  Map& map = m_MapLoader->GetMap("level1");
+  
   auto oldman = m_Textures.at(0);
   Entity player = registry.CreateEntity();
-  Vector2 pInitialPos = Vector2{ m_Window->GetWidth() / 2.0f, m_Window->GetHeight() - 125.0f };
   adv::RigidBody playerRigidBody(Vector2Zero(), Vector2Zero(),
 								 100.0f, 100.0f, 50.0f, 0.01f, true);
-  CreatePlayer(player, oldman, pInitialPos, playerRigidBody);
+  CreatePlayer(player, oldman, map.playerInitialPos, playerRigidBody);
 
   // tiles
   auto tiles = m_Textures.at(1);
   Vector2 tileTexSize = { tiles->width * .1f, tiles->height / 6.0f };
-
-  const int tileAmount = 10;  
-  m_Entities.resize(tileAmount);
+  Vector2 tileSize = { (float)m_Window->GetWidth() / map.grid.x, m_Window->GetHeight() * map.grid.y };
   
-  Vector2 tileSize = { (float)m_Window->GetWidth() / tileAmount, m_Window->GetHeight() * .10f };
-  
-  for (size_t i = 0; i < tileAmount; i++) {
-	m_Entities[i] = registry.CreateEntity();
-	Vector2 pos = {tileSize.x * (i + .5f), 0};
-	adv::Transform transform(pos, tileSize, Vector2Zero());
-	adv::ToBottom(transform, m_Window->GetHeight());
+  for (const std::vector<std::pair<size_t, size_t>>& row : map.tiles) {
+	for (const std::pair<size_t, size_t>& pair : row) {
+	  Entity e = registry.CreateEntity();
+	  Vector2 pos = {tileSize.x * (i + .5f), 0};
+	  adv::Transform transform(pos, tileSize, Vector2Zero());
+	  adv::ToBottom(transform, m_Window->GetHeight());
 	
-	std::cout << "Adding tile at (" << transform.translation.x << ", " <<
-	  transform.translation.y << ")\n";
+	  std::cout << "Adding tile at (" << transform.translation.x << ", " <<
+		transform.translation.y << ")\n";
 	
-	registry.AddComponent(m_Entities[i], adv::RigidBody::CreateStatic(10.0f, 5.0f));
-	registry.AddComponent(m_Entities[i], adv::Sprite(tiles, tileTexSize, 43));
-	registry.AddComponent(m_Entities[i], transform);
-	registry.AddComponent(m_Entities[i], adv::Collider(tileSize));
+	  registry.AddComponent(e, adv::RigidBody::CreateStatic(10.0f, 5.0f));
+	  registry.AddComponent(e, adv::Sprite(tiles, tileTexSize, 43));
+	  registry.AddComponent(e, transform);
+	  registry.AddComponent(e, adv::Collider(tileSize));
+	
+	  m_Entities.push_back(e);
+	}
   }
 
   playerIndex = 0;

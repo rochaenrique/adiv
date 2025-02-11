@@ -1,5 +1,6 @@
 #include "Helper.h"
 #include <iomanip>
+#include <string>
 
 namespace adv
 {
@@ -67,6 +68,40 @@ namespace adv
   {
 	return Vector2DotProduct(v, WORLD_RIGHT);
   }
+
+  Vector2 ToVector2(const std::string& s)
+  {
+	Vector2 v = Vector2Zero();
+	auto it = s.begin();
+	while (it != s.end() && std::isdigit(*it)) {
+	  v.x = v.x * 10 + (*it - '0');
+	  it++;
+	}
+	it++;
+	while (it != s.end() && std::isdigit(*it)) {
+	  v.y = v.y * 10 + (*it - '0');
+	  it++;
+	}
+
+	return v;
+  }
+  
+  Vector2 ToVector2(std::string::iterator& it, const std::string::iterator end)
+  {
+	Vector2 v = Vector2Zero();
+	while (it != end && std::isdigit(*it)) {
+	  v.x = v.x * 10 + (*it - '0');
+	  it++;
+	}
+	if (it == end) return v;
+	it++;
+	while (it != end && std::isdigit(*it)) {
+	  v.y = v.y * 10 + (*it - '0');
+	  it++;
+	}
+
+	return v;
+  };
 }
 
 std::ostream& operator<<(std::ostream& os, const Vector2& vec)
