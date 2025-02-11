@@ -40,7 +40,8 @@ src/Game.cpp \
 src/main.cpp \
 src/util/Helper.cpp \
 src/Window.cpp \
-src/MapLoader.cpp
+src/MapLoader.cpp \
+src/Level.cpp
 
 OBJECTS = \
 build/Collider.o \
@@ -57,7 +58,8 @@ build/Game.o \
 build/main.o \
 build/Helper.o \
 build/Window.o \
-build/MapLoader.o
+build/MapLoader.o \
+build/Level.o
 
 $(EXECUTABLE): $(OBJECTS)
 	$(CC) $(FLAGS) $(OBJECTS) $(INCLUDES) $(LIB_DIRS) $(LIBS) -o $@
@@ -148,7 +150,8 @@ src/ecs/systems/PhysicsSystem.h src/ecs/components/RigidBody.h \
 src/ecs/components/Transform.h src/ecs/systems/PlayerSystem.h \
 src/ecs/systems/RenderCollidersSystem.h src/ecs/systems/RenderSystem.h \
 src/ecs/components/Sprite.h src/util/Helper.h src/ecs/Components.h \
-src/ecs/components/Player.h src/util/Random.h
+src/ecs/components/Player.h src/util/Random.h \
+src/Level.h
 	$(CC) $(FLAGS) $(INCLUDES) -c src/Game.cpp -o $@
 
 build/main.o: src/main.cpp src/Game.h \
@@ -177,6 +180,12 @@ build/Window.o: src/Window.cpp src/Window.h
 
 build/MapLoader.o: src/MapLoader.cpp src/MapLoader.h 
 	$(CC) $(FLAGS) $(INCLUDES) -c src/MapLoader.cpp -o $@
+
+build/Level.o: src/Level.cpp src/Level.h \
+src/MapLoader.h src/ecs/ECS.h \
+src/Game.h src/ecs/components/Sprite.h \
+src/ecs/Registry.h 
+	$(CC) $(FLAGS) $(INCLUDES) -c src/Level.cpp -o $@
 
 .PHONY : clean
 clean:

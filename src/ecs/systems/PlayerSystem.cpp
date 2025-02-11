@@ -21,7 +21,6 @@
 #define STANDING_INDEX   27
 
 extern Registry registry;
-extern float playerIndex;
 
 void PlayerSystem::Update(float dt)
 { 
@@ -71,7 +70,7 @@ void PlayerSystem::Update(float dt)
 
 	  // TODO: REMOVE (TEST)
 	  m_Animation.Update(dt);
-	  std::cout << "Animation Value: " << (playerIndex = m_Animation.Value()) << '\n';
+	  //	  std::cout << "Animation Value: " << m_Animation.Value() << '\n';
 	}
   }
 }

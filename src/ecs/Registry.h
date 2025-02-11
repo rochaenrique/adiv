@@ -14,7 +14,7 @@ public:
   
   Entity CreateEntity();
   
-  void DestroyEntity(Entity e);
+  void DestroyEntity(Entity);
 
   template<typename T>
   void RegisterComponent() { m_CM->Register<T>(); }

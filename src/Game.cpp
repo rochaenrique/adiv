@@ -13,15 +13,12 @@
 #define TILES_PATH  SPRITE_DIR"/tiles.png"
 
 Registry registry;
-float playerIndex;
 
 Game::Game(const WindowOptions& wopt)
 {
   m_Window = std::unique_ptr<Window>(Window::Create(wopt));
   m_Window->Init();
-
   m_MapLoader = std::make_unique<MapLoader>("res/maps");
-  m_MapLoader->LoadFile("level1");
 
   m_Textures.emplace_back(std::make_shared<Texture2D>(LoadTexture(OLDMAN_PATH)));
   m_Textures.emplace_back(std::make_shared<Texture2D>(LoadTexture(TILES_PATH)));
@@ -30,33 +27,66 @@ Game::Game(const WindowOptions& wopt)
   registry.Init();
   InitComponents();
   InitSystems();
+  InitLevels();
 
   Demo();
 }
 
 void Game::Run()
 {
-  std::cout << "STARTING\n";
-  Vector2 center = m_Window->GetCenter();
-  while (!WindowShouldClose()) {
+  m_Running = true;
+  m_CurrentLevel->Load(m_Window->GetSize());
+  
+  while (m_Running && (m_Running = !WindowShouldClose())) {
 	m_DT = GetFrameTime();
 	ClearBackground(SKYBLUE);
 
 	for (const auto& s : m_UpdateSystems)
 	  s->Update(m_DT);
+
+	if (IsKeyPressed(KEY_L)) 
+	  NextLevel();
 	
 	BeginDrawing();
 	  DrawFPS(0, 0);
-	  
-	  // TEMPORARY
-	  DrawText(TextFormat("Player Animation: %f", playerIndex),
-			   center.x, center.y, 20, WHITE);
 	  BeginBlendMode(BLEND_ALPHA);
 	  for (const auto& s : m_DrawSystems)
 		s->Update(m_DT);
 	  EndBlendMode();
 	EndDrawing();
   }
+}
+
+
+Entity Game::CreatePlayer(adv::Sprite sprite, const Vector2 ipos)
+{
+  Entity e = registry.CreateEntity();
+  Vector2 spriteSize = { (float)sprite.GetTexture()->width * .125f, (float)sprite.GetTexture()->height * .125f };
+  
+  registry.AddComponent(e, adv::Player());
+  registry.AddComponent(e, adv::RigidBody(Vector2Zero(), Vector2Zero(),
+										  100.0f, 100.0f, 50.0f, 0.01f, true));
+  registry.AddComponent(e, adv::Transform(ipos, spriteSize * .25f, Vector2Zero()));
+  registry.AddComponent(e, adv::Collider(spriteSize * .25f));
+  registry.AddComponent(e, sprite);
+  
+  return e;
+}
+
+Entity Game::CreateTile(adv::Sprite sprite, std::pair<size_t, size_t> tile, Vector2 size, size_t row, size_t nrows)
+{
+  Entity e = registry.CreateEntity();
+  sprite.SetIndex(tile.first);
+  
+  Vector2 pos = { size.x * (tile.second + .5f), 0 };
+  adv::Transform transform(pos, size, Vector2Zero());
+  adv::ToBottom(transform, size.y * (nrows - row));
+
+  registry.AddComponent(e, adv::RigidBody::CreateStatic(10.0f, 5.0f));
+  registry.AddComponent(e, sprite);
+  registry.AddComponent(e, transform);
+  registry.AddComponent(e, adv::Collider(size));
+  return e;
 }
 
 void Game::InitComponents() const
@@ -132,65 +162,40 @@ void Game::InitSystems()
 
   m_DrawSystems = {
 	renderSystem,
-	renderCollidersSystem,
+	// renderCollidersSystem,
   };
 }
 
-void Game::CreatePlayer(Entity& e, const std::shared_ptr<Texture2D>&t, const Vector2 ipos, const adv::RigidBody& r)
+void Game::InitLevels()
 {
-  float spriteWidth = (float)t->width * .125f;
-  Vector2 spriteSize = { spriteWidth, spriteWidth };
-  Vector2 realSize = spriteSize * .25f;
-  adv::Player playerComp;
-  registry.AddComponent(e, playerComp);
-	
-  adv::Collider collider(realSize);
-  collider.SetCollisionCallback([](const adv::Collision& col, float) {
-	auto pa = registry.RiskyGetComponent<adv::Player>(col.a);
-	auto pb = registry.RiskyGetComponent<adv::Player>(col.b);
-	
-	if (pa) pa->SetJumping(false);
-	else if (pb) pb->SetJumping(false);
-  });
+  adv::Sprite pSprite(m_Textures.at(0), { 8, 8 }, 0);
+  adv::Sprite tSprite(m_Textures.at(1), { 10, 6 }, 0);
+
+  m_MapLoader->LoadFile("level1");
+  m_MapLoader->LoadFile("level2");
+  m_Levels.reserve(2);
   
-  registry.AddComponent(e, r);
-  registry.AddComponent(e, adv::Transform(ipos, realSize, Vector2Zero()));
-  registry.AddComponent(e, collider);
-  registry.AddComponent(e, adv::Sprite(t, spriteSize, 0));
+  m_Levels.emplace_back(m_MapLoader->GetMap("level1"),
+						pSprite,
+						tSprite);
+  
+  m_Levels.emplace_back(m_MapLoader->GetMap("level2"),
+						pSprite,
+						tSprite);
+
+  m_CurrentLevel = m_Levels.begin();
+}
+
+void Game::NextLevel()
+{
+  std::cout << "Loading next level\n";
+  m_CurrentLevel->UnloadECS();
+  
+  m_CurrentLevel++;
+  if ((m_Running = (m_CurrentLevel != m_Levels.end()))) 
+	m_CurrentLevel->Load(m_Window->GetSize());
 }
 
 void Game::Demo()
 {
-  LoadMap(m_MapLoader->GetMap("level1"));
-}
-
-void Game::LoadMap(const Map& map)
-{
-  auto oldman = m_Textures.at(0);
-  Entity player = registry.CreateEntity();
-  adv::RigidBody playerRigidBody(Vector2Zero(), Vector2Zero(),
-								 100.0f, 100.0f, 50.0f, 0.01f, true);
-  CreatePlayer(player, oldman, map.playerInitialPos, playerRigidBody);
-  m_Entities.push_back(player);
-
-  auto tiles = m_Textures.at(1);
-  Vector2 tileTexSize = { tiles->width * .1f, tiles->height / 6.0f };
-  Vector2 tileSize = { (float)m_Window->GetWidth() / map.grid.x, m_Window->GetHeight() / map.grid.y };
-  
-  for (size_t i = 0; i < map.tiles.size() && i < map.grid.y; i++) {
-	for (size_t j = 0; j < map.tiles[i].size() && j < map.grid.x; j++) {
-	  const std::pair<size_t, size_t>& tile = map.tiles[i][j];
-	  
-	  Entity e = registry.CreateEntity();
-	  Vector2 pos = {tileSize.x * (tile.second + .5f), 0};
-	  adv::Transform transform(pos, tileSize, Vector2Zero());
-	  adv::ToBottom(transform, tileSize.y * (map.grid.y - i));
-
-	  registry.AddComponent(e, adv::RigidBody::CreateStatic(10.0f, 5.0f));
-	  registry.AddComponent(e, adv::Sprite(tiles, tileTexSize, tile.first));
-	  registry.AddComponent(e, transform);
-	  registry.AddComponent(e, adv::Collider(tileSize));
-	  m_Entities.push_back(e);
-	}
-  }
 }

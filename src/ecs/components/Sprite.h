@@ -9,16 +9,14 @@ namespace adv
   class Sprite
   {
   public:
-  Sprite()
-	: m_Texture{nullptr}, m_Source{0, 0, 0, 0},
-	  m_Index{0}, m_Grid{0, 0}
+	Sprite()
+	: m_Texture{nullptr}, m_Grid{0, 0},
+	  m_Source{0, 0, 0, 0}, m_Index{0}
 	{};
-	Sprite(const std::shared_ptr<Texture2D>& t, Vector2 sz, size_t i)
-	  : m_Texture{t}
+	Sprite(const std::shared_ptr<Texture2D>& t, Vector2 grid, size_t i)
+	  : m_Texture{t}, m_Grid{grid}
 	{
-	  m_Source = { 0, 0, sz.x, sz.y };
-	  m_Grid = { std::floor(t->width / sz.x), std::floor(t->height / sz.y) };
-	  
+	  m_Source = {0, 0, std::floor(t->width / grid.x), std::floor(t->height / grid.y) };
 	  if (IsInRange(i)) {
 		m_Index = i;
 		ReCalcSource();
@@ -51,13 +49,14 @@ namespace adv
 
 	const std::shared_ptr<Texture2D>& GetTexture() const { return m_Texture; }
 	Rectangle GetSource() const { return m_Source; }
-	size_t GetIndex() const { return m_Index; };
+	size_t GetIndex() const { return m_Index; }
+	Vector2 GetSize() const { return { m_Source.width, m_Source.height }; }
 	
   private:
 	std::shared_ptr<Texture2D> m_Texture;
+	Vector2 m_Grid;
 	Rectangle m_Source;
 	size_t m_Index;
-	Vector2 m_Grid;
 
 	bool IsInRange(size_t i) const
 	{

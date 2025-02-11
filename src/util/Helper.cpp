@@ -123,6 +123,12 @@ std::ostream& operator<<(std::ostream& os, const adv::RigidBody& rb)
   return os;
 }
 
+std::ostream& operator<<(std::ostream& os, const adv::Transform& tr)
+{
+  os << "xy: " << tr.translation << ", scale: " << tr.scale << ", rotation: " << tr.rotation;
+  return os;
+}
+
 std::ostream& operator<<(std::ostream& os, const adv::Player& p)
 {
   os << "Jumping: " << p.IsJumping();

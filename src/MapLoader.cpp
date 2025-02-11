@@ -48,6 +48,8 @@ std::optional<Map> MapLoader::LoadFile(const std::string& filename)
 	file.close();
   }
 
+  std::cout << "Read Map file '" << filename << "'\n";
+
   return m_FileToMap[filename] = map;
 }
 

@@ -17,7 +17,6 @@ class MapLoader
 {
 public:
   MapLoader(const std::string& path);
-  
 
   std::optional<Map> LoadFile(const std::string&);
   Map& GetMap(const std::string& filename);
