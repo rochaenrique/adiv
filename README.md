@@ -15,21 +15,22 @@
 - When you 'die' death takes you back to the beggining.
 
 ## TODO:
-[x] ECS Implementation
-[x] Physics Engine Implementation
-[x] Rectangle Collider Detector Implementation
-[x] Collision Responder
-[x] General basic player movement
-[ ] Player sprite animations
-[ ] Map loader with textures
-[ ] First level with obstacles
-[ ] Level reset when die
-[ ] Basic UI 
-[ ] NPC's with scripting
-[ ] Multiple levels with diferent sprites
-[ ] In game interactive elements
-...
-[ ] Loading screen
+- [x] ECS Implementation
+- [x] Physics Engine Implementation
+- [x] Rectangle Collider Detector Implementation
+- [x] Collision Responder
+- [x] General basic player movement
+- [x] Map loader with textures
+- [ ] First level with obstacles
+- [ ] Checkpoints
+- [ ] Player sprite animations
+- [ ] Level reset when die
+- [ ] Basic UI 
+- [ ] NPC's with scripting
+- [ ] Multiple levels with diferent sprites
+- [ ] In game interactive elements
+- ...
+- [ ] Loading screen
 
 # References:
 - ECS System https://austinmorlan.com/posts/entity_component_system/

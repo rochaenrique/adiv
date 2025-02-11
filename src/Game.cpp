@@ -31,8 +31,7 @@ Game::Game(const WindowOptions& wopt)
   InitComponents();
   InitSystems();
 
-
-  Demo(); // TODO REMOVE
+  Demo();
 }
 
 void Game::Run()
@@ -133,7 +132,7 @@ void Game::InitSystems()
 
   m_DrawSystems = {
 	renderSystem,
-	// renderCollidersSystem,
+	renderCollidersSystem,
   };
 }
 
@@ -162,38 +161,36 @@ void Game::CreatePlayer(Entity& e, const std::shared_ptr<Texture2D>&t, const Vec
 
 void Game::Demo()
 {
-  // player
-  Map& map = m_MapLoader->GetMap("level1");
-  
+  LoadMap(m_MapLoader->GetMap("level1"));
+}
+
+void Game::LoadMap(const Map& map)
+{
   auto oldman = m_Textures.at(0);
   Entity player = registry.CreateEntity();
   adv::RigidBody playerRigidBody(Vector2Zero(), Vector2Zero(),
 								 100.0f, 100.0f, 50.0f, 0.01f, true);
   CreatePlayer(player, oldman, map.playerInitialPos, playerRigidBody);
+  m_Entities.push_back(player);
 
-  // tiles
   auto tiles = m_Textures.at(1);
   Vector2 tileTexSize = { tiles->width * .1f, tiles->height / 6.0f };
-  Vector2 tileSize = { (float)m_Window->GetWidth() / map.grid.x, m_Window->GetHeight() * map.grid.y };
+  Vector2 tileSize = { (float)m_Window->GetWidth() / map.grid.x, m_Window->GetHeight() / map.grid.y };
   
-  for (const std::vector<std::pair<size_t, size_t>>& row : map.tiles) {
-	for (const std::pair<size_t, size_t>& pair : row) {
+  for (size_t i = 0; i < map.tiles.size() && i < map.grid.y; i++) {
+	for (size_t j = 0; j < map.tiles[i].size() && j < map.grid.x; j++) {
+	  const std::pair<size_t, size_t>& tile = map.tiles[i][j];
+	  
 	  Entity e = registry.CreateEntity();
-	  Vector2 pos = {tileSize.x * (i + .5f), 0};
+	  Vector2 pos = {tileSize.x * (tile.second + .5f), 0};
 	  adv::Transform transform(pos, tileSize, Vector2Zero());
-	  adv::ToBottom(transform, m_Window->GetHeight());
-	
-	  std::cout << "Adding tile at (" << transform.translation.x << ", " <<
-		transform.translation.y << ")\n";
-	
+	  adv::ToBottom(transform, tileSize.y * (map.grid.y - i));
+
 	  registry.AddComponent(e, adv::RigidBody::CreateStatic(10.0f, 5.0f));
-	  registry.AddComponent(e, adv::Sprite(tiles, tileTexSize, 43));
+	  registry.AddComponent(e, adv::Sprite(tiles, tileTexSize, tile.first));
 	  registry.AddComponent(e, transform);
 	  registry.AddComponent(e, adv::Collider(tileSize));
-	
 	  m_Entities.push_back(e);
 	}
   }
-
-  playerIndex = 0;
 }

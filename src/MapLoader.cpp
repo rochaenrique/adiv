@@ -28,7 +28,7 @@ std::optional<Map> MapLoader::LoadFile(const std::string& filename)
   
   if (file.is_open()) {
 	std::getline(file, line);
-	map.playerInitalPos = adv::ToVector2(line);
+	map.playerInitialPos = adv::ToVector2(line);
 	
 	std::getline(file, line);
 	map.grid = adv::ToVector2(line);
@@ -38,9 +38,10 @@ std::optional<Map> MapLoader::LoadFile(const std::string& filename)
 	  auto it = line.begin();
 	  while (it != line.end()) {
 		temp = adv::ToVector2(it, line.end());
+		map.tiles[i].emplace_back(std::make_pair<size_t, size_t>(temp.x, temp.y));
+		
 		if (it == line.end()) break;
 		it++;
-		map.tiles[i].emplace_back(std::make_pair<size_t, size_t>(temp.x, temp.y));
 	  }
 	  map.tiles.emplace_back();
 	}

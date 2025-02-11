@@ -110,6 +110,13 @@ std::ostream& operator<<(std::ostream& os, const Vector2& vec)
   return os;
 }
 
+std::ostream& operator<<(std::ostream& os, const Rectangle& rect)
+{
+  os << "x: " << rect.x << ", y: " << rect.y << ", width: "
+	 << rect.width << ", height: " << rect.height << std::setprecision(3);
+  return os;
+}
+
 std::ostream& operator<<(std::ostream& os, const adv::RigidBody& rb)
 {
   os << "F: " << rb.GetForce() << ", Last F: " << rb.GetLastForce() << ", Vel: " << rb.GetVelocity();

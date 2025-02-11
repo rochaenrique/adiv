@@ -8,7 +8,7 @@
 
 struct Map
 {
-  Vector2 playerInitalPos;
+  Vector2 playerInitialPos;
   Vector2 grid;
   std::vector<std::vector<std::pair<size_t, size_t>>> tiles {{}};
 };

@@ -28,7 +28,7 @@ namespace adv
   Vector2 ToVector2(std::string::iterator&, const std::string::iterator);
   
 }
-
+std::ostream& operator<<(std::ostream& os, const Rectangle& rect);
 std::ostream& operator<<(std::ostream&, const Vector2&);
 std::ostream& operator<<(std::ostream&, const adv::RigidBody&);
 std::ostream& operator<<(std::ostream&, const adv::Player&);

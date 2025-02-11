@@ -2,8 +2,8 @@
 #include <string>
 #include <raylib.h>
 
-#define WINDOW_WIDTH  1600
-#define WINDOW_HEIGHT 900
+#define WINDOW_WIDTH  800
+#define WINDOW_HEIGHT 600
 
 struct WindowOptions
 {
