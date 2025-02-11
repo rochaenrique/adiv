@@ -6,3 +6,4 @@
 #include "components/RigidBody.h"   
 #include "components/Sprite.h"      
 #include "components/Transform.h"
+#include "components/Camera.h"

@@ -35,7 +35,7 @@ Game::Game(const WindowOptions& wopt)
 void Game::Run()
 {
   m_Running = true;
-  m_CurrentLevel->Load(m_Window->GetSize());
+  m_CurrentLevel->Load();
   
   while (m_Running && (m_Running = !WindowShouldClose())) {
 	m_DT = GetFrameTime();
@@ -50,15 +50,19 @@ void Game::Run()
 	BeginDrawing();
 	  DrawFPS(0, 0);
 	  BeginBlendMode(BLEND_ALPHA);
-	  for (const auto& s : m_DrawSystems)
-		s->Update(m_DT);
+	    BeginMode2D(*m_CurrentLevel->GetCamera().camera);
+		
+	    for (const auto& s : m_DrawSystems)
+	      s->Update(m_DT);
+		
+	    EndMode2D();
 	  EndBlendMode();
 	EndDrawing();
   }
 }
 
 
-Entity Game::CreatePlayer(adv::Sprite sprite, const Vector2 ipos)
+Entity Game::CreatePlayer(adv::Sprite sprite, const adv::Camera& cam, const Vector2 ipos)
 {
   Entity e = registry.CreateEntity();
   Vector2 spriteSize = { (float)sprite.GetTexture()->width * .125f, (float)sprite.GetTexture()->height * .125f };
@@ -69,6 +73,7 @@ Entity Game::CreatePlayer(adv::Sprite sprite, const Vector2 ipos)
   registry.AddComponent(e, adv::Transform(ipos, spriteSize * .25f, Vector2Zero()));
   registry.AddComponent(e, adv::Collider(spriteSize * .25f));
   registry.AddComponent(e, sprite);
+  registry.AddComponent(e, cam);
   
   return e;
 }
@@ -96,6 +101,7 @@ void Game::InitComponents() const
   registry.RegisterComponent<adv::Collider>();
   registry.RegisterComponent<adv::RigidBody>();
   registry.RegisterComponent<adv::Transform>();
+  registry.RegisterComponent<adv::Camera>();
 }
 
 void Game::InitSystems()
@@ -141,23 +147,19 @@ void Game::InitSystems()
 	registry.SetSystemSignature<RenderCollidersSystem>(sign);
   }
 
-  playerSystem->m_Animation = adv::Animation({
-	  {
-		.from	  = 100.0f,
-		.to		  = 0.0f,
-		.duration = 10.0f 
-	  },
-	  {
-		.from	  = 25.0f,
-		.to		  = 50.0f,
-		.duration = 50.0f 
-	  },
-	}, true);
-  
+  auto cameraSystem  = registry.RegisterSystem<CameraSystem>();
+  {
+	Signature sign;
+	sign.set(registry.GetComponentID<adv::Camera>());
+	sign.set(registry.GetComponentID<adv::Transform>());
+	registry.SetSystemSignature<CameraSystem>(sign);
+  }
+
   m_UpdateSystems = {
 	playerSystem,
 	collisionSystem,
 	physicsSystem,
+	cameraSystem
   };
 
   m_DrawSystems = {
@@ -193,7 +195,7 @@ void Game::NextLevel()
   
   m_CurrentLevel++;
   if ((m_Running = (m_CurrentLevel != m_Levels.end()))) 
-	m_CurrentLevel->Load(m_Window->GetSize());
+	m_CurrentLevel->Load();
 }
 
 void Game::Demo()

@@ -35,10 +35,10 @@ public:
   static Window* Create(WindowOptions opt = WindowOptions());
   void Init();
 
-  unsigned GetWidth() const { return m_Data.Width; }
-  unsigned GetHeight() const { return m_Data.Height; }
-  Vector2  GetSize() const { return { (float)m_Data.Width, (float)m_Data.Height }; }
-  Vector2  GetCenter() const { return GetSize() / 2.0f; };
+  int		static GetWidth()	{ return GetScreenWidth(); }
+  int		static GetHeight()  { return GetScreenHeight(); }
+  Vector2	static GetSize()	{ return { (float)GetScreenWidth(), (float)GetScreenHeight() }; }
+  Vector2	static GetCenter()  { return GetSize() / 2.0f; };
 private:
   WindowOptions m_Data;
 };

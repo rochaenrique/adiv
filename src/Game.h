@@ -15,7 +15,7 @@ public:
   Game(const WindowOptions& wopt = WindowOptions());
   void Run();
 
-  static Entity CreatePlayer(adv::Sprite, const Vector2);
+  static Entity CreatePlayer(adv::Sprite, const adv::Camera&, const Vector2);
   static Entity CreateTile(adv::Sprite, std::pair<size_t, size_t>, Vector2, size_t, size_t);
 
 private:
@@ -24,16 +24,17 @@ private:
   
   std::unique_ptr<Window> m_Window;
   std::unique_ptr<MapLoader> m_MapLoader;
+  
+  std::vector<Level> m_Levels;
+  std::vector<Level>::iterator m_CurrentLevel;
 
-  std::vector<Entity> m_Entities {};
   std::vector<std::shared_ptr<Texture2D>> m_Textures {};
 
   std::vector<std::shared_ptr<System>> m_UpdateSystems;
   std::vector<std::shared_ptr<System>> m_DrawSystems;
-
-  std::vector<Level> m_Levels;
-  std::vector<Level>::iterator m_CurrentLevel;
   
+  Camera2D m_Camera;
+
   void InitComponents() const;
   void InitSystems();
   void InitLevels();
