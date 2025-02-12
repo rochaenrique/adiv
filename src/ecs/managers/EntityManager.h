@@ -1,6 +1,6 @@
 #pragma once
 #include "ecs/ECS.h"
-#include <stack>
+#include <queue>
 #include <array>
 
 class EntityManager
@@ -15,7 +15,7 @@ public:
   Signature GetSignature(Entity);
   
 private:
-  std::stack<Entity> m_Available {};
+  std::queue<Entity> m_Available {};
   std::array<Signature, MAX_ENTITIES> m_Signatures {};
   int m_Alive {};
 };

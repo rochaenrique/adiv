@@ -3,6 +3,7 @@
 #include <format>
 #include <cstdio>
 #include "Animation.h"
+#include "EventManager.h"
 #include "ecs/Systems.h"
 #include "ecs/Components.h"
 #include "util/Random.h"
@@ -19,6 +20,11 @@ Game::Game(const WindowOptions& wopt)
 {
   m_Window = std::unique_ptr<Window>(Window::Create(wopt));
   m_Window->Init();
+  
+  EventManager::Get().SetEventCallback([this](Event& e) {
+	return OnEvent(e);
+  });
+  
   m_MapLoader = std::make_unique<MapLoader>("res/maps");
 
   m_Textures.emplace_back(std::make_shared<Texture2D>(LoadTexture(OLDMAN_PATH)));
@@ -42,10 +48,11 @@ void Game::Run()
   while (m_Running && (m_Running = !WindowShouldClose())) {
 	m_DT = GetFrameTime();
 	ClearBackground(SKYBLUE);
-	
-	if (IsKeyPressed(KEY_L)) 
-	  NextLevel();
+	EventManager::Get().Dispatch();
 
+	if (m_PendingNextLevel) 
+	  NextLevel();
+	
 	for (const auto& s : m_UpdateSystems)
 	  s->Update(m_DT);
 
@@ -63,6 +70,18 @@ void Game::Run()
   }
 }
 
+bool Game::OnEvent(Event& e)
+{
+  if (e.IsHandled()) return false;
+  
+  switch (e.GetType()) {
+  case CheckPoint:
+	m_PendingNextLevel = true;
+	e.SetHandled();
+	break;
+  }
+  return true;
+}
 
 Entity Game::CreatePlayer(adv::Sprite sprite, const adv::Camera& cam, const Vector2 ipos)
 {
@@ -92,7 +111,7 @@ Entity Game::CreatePlayer(adv::Sprite sprite, const adv::Camera& cam, const Vect
   return e;
 }
 
-Entity Game::CreateTile(adv::Sprite sprite, std::pair<size_t, size_t> tile, Vector2 size, size_t row, size_t nrows)
+Entity Game::CreateTile(adv::Sprite sprite, std::pair<size_t, size_t> tile, Vector2 size, size_t row, size_t nrows, const adv::Collider& collider)
 {
   Entity e = registry.CreateEntity();
   sprite.SetIndex(tile.first);
@@ -104,7 +123,7 @@ Entity Game::CreateTile(adv::Sprite sprite, std::pair<size_t, size_t> tile, Vect
   registry.AddComponent(e, adv::RigidBody::CreateStatic(10.0f, 5.0f));
   registry.AddComponent(e, sprite);
   registry.AddComponent(e, transform);
-  registry.AddComponent(e, adv::Collider(size));
+  registry.AddComponent(e, collider);
   return e;
 }
 
@@ -189,8 +208,8 @@ void Game::InitSystems()
   }
 
   m_UpdateSystems = {
-	playerSystem,
 	collisionSystem,
+	playerSystem,
 	physicsSystem,
 	cameraSystem,
 	animatorSystem,
@@ -228,12 +247,15 @@ void Game::InitLevels()
 
 void Game::NextLevel()
 {
-  std::cout << "Loading next level\n";
-  m_CurrentLevel->UnloadECS();
+  if (!m_PendingNextLevel) return;
+  m_PendingNextLevel = false;
   
-  m_CurrentLevel++;
-  if ((m_Running = (m_CurrentLevel != m_Levels.end()))) 
+  m_CurrentLevel->Unload();
+  
+  if ((m_Running = (++m_CurrentLevel != m_Levels.end()))) 
 	m_CurrentLevel->Load();
+  
+  EventManager::Get().Flush(EventType::CheckPoint);
 }
 
 void Game::Demo()

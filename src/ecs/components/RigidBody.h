@@ -8,15 +8,15 @@ namespace adv
   {
   public:
   RigidBody()
-	: force{Vector2Zero()}, velocity{Vector2Zero()},
-	  mass{1.0f}, staticFriction{0}, dynamicFriction{0}, restitution{1.0f},
-	  dynamic{true}
+	: m_Force{Vector2Zero()}, m_Velocity{Vector2Zero()},
+	  m_Mass{1.0f}, m_StaticFriction{0}, m_DynamicFriction{0}, m_Restitution{1.0f},
+	  m_Dynamic{true}
 	{};
 	
-  RigidBody(Vector2 f, Vector2 v, float m, float sf, float df, float r, bool d)
-	: force{f}, velocity{v},
-	  mass{m}, staticFriction{sf}, dynamicFriction{df}, restitution{r},
-	  dynamic{d}
+	RigidBody(Vector2 f, Vector2 v, float m, float sf, float df, float r, bool d)
+	: m_Force{f}, m_Velocity{v},
+	  m_Mass{m}, m_StaticFriction{sf}, m_DynamicFriction{df}, m_Restitution{r},
+	  m_Dynamic{d}
 	{};
 
 	static RigidBody CreateStatic(float sf, float df)
@@ -26,42 +26,42 @@ namespace adv
 
 	void ApplyForce(Vector2 f)
 	{
-	  force += f;
+	  m_Force += f;
 	};
 	void ApplyAcc(Vector2 a)
 	{
-	  force += a * mass;
+	  m_Force += a * m_Mass;
 	};
 	void ResolveForces(float dt)
 	{
-	  velocity += force * InvMass() * dt;
+	  m_Velocity += m_Force * InvMass() * dt;
 	}
 	void ResetForce()
 	{
-	  lastForce = force;
-	  force = Vector2Zero();
+	  lastForce = m_Force;
+	  m_Force = Vector2Zero();
 	};
 
 	void ApplyVelocity(Vector2 v)
 	{
-	  velocity += v;
+	  m_Velocity += v;
 	};
 	
-	Vector2 GetForce() const { return force; }	
-	Vector2 GetVelocity() const { return velocity; }
+	Vector2 GetForce() const { return m_Force; }	
+	Vector2 GetVelocity() const { return m_Velocity; }
 	Vector2 GetLastForce() const { return lastForce; }
 
-	float GetMass() const { return mass; }
-	float InvMass() const { return (mass != 0.0f) ? (1.0f / mass) : 0.0f; }
+	float GetMass() const { return m_Mass; }
+	float InvMass() const { return (m_Mass != 0.0f) ? (1.0f / m_Mass) : 0.0f; }
 
-	float GetStaticFriction() const { return staticFriction; }
-	float GetDynamicFriction() const { return dynamicFriction; }
-	float GetRestitution() const { return restitution; }
+	float GetStaticFriction() const { return m_StaticFriction; }
+	float GetDynamicFriction() const { return m_DynamicFriction; }
+	float GetRestitution() const { return m_Restitution; }
 
-	bool IsDynamic() { return dynamic; };
+	bool IsDynamic() { return m_Dynamic; };
   private:	
-	Vector2 force, velocity, lastForce = Vector2Zero();
-	float mass, staticFriction, dynamicFriction, restitution;
-	bool dynamic;
+	Vector2 m_Force, m_Velocity, lastForce = Vector2Zero();
+	float m_Mass, m_StaticFriction, m_DynamicFriction, m_Restitution;
+	bool m_Dynamic;
   };
 }

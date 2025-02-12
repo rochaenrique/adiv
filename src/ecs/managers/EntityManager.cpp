@@ -11,7 +11,7 @@ Entity EntityManager::Create()
 {
   assert(m_Alive < MAX_ENTITIES && "Too many alive entities"); 
 
-  Entity e = m_Available.top();
+  Entity e = m_Available.front();
   m_Available.pop();
   m_Alive++;
   return e;

@@ -8,6 +8,7 @@
 #include "ecs/Registry.h"
 #include "ecs/Systems.h"
 #include "ecs/Components.h"
+#include "Event.h"
 
 class Game
 {
@@ -15,8 +16,10 @@ public:
   Game(const WindowOptions& wopt = WindowOptions());
   void Run();
 
+  bool OnEvent(Event&);
+
   static Entity CreatePlayer(adv::Sprite, const adv::Camera&, const Vector2);
-  static Entity CreateTile(adv::Sprite, std::pair<size_t, size_t>, Vector2, size_t, size_t);
+  static Entity CreateTile(adv::Sprite, std::pair<size_t, size_t>, Vector2, size_t, size_t, const adv::Collider&);
 
 private:
   float m_DT = 0.0f;
@@ -32,6 +35,8 @@ private:
 
   std::vector<std::shared_ptr<System>> m_UpdateSystems;
   std::vector<std::shared_ptr<System>> m_DrawSystems;
+
+  bool m_PendingNextLevel = false;
   
   void InitComponents() const;
   void InitSystems();

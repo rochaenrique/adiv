@@ -49,15 +49,15 @@ namespace adv
 	void SetCollisionCallback(const CollisionCallback& func)
 	{
 	  onCollision = func;
-	  trigger = true;
+	  m_Trigger = true;
 	};
-	bool IsTrigger() const { return trigger; };
+	bool IsTrigger() const { return m_Trigger; };
 	static CollisionPoints TestCollision(Collider&, Collider&);
 	
 	Rectangle rectangle;
 	CollisionCallback onCollision;
   private:
-	bool trigger = false;
+	bool m_Trigger = false;
   };
 
 }

@@ -168,7 +168,9 @@ src/ecs/systems/RenderCollidersSystem.h src/ecs/systems/RenderSystem.h \
 src/ecs/components/Sprite.h src/util/Helper.h src/ecs/Components.h \
 src/ecs/components/Player.h src/util/Random.h \
 src/Level.h src/ecs/components/Camera.h \
-src/ecs/systems/CameraSystem.h src/ecs/systems/AnimatorSystem.h
+src/ecs/systems/CameraSystem.h src/ecs/systems/AnimatorSystem.h \
+src/Animation.h src/EventManager.h \
+src/Event.h
 	$(CC) $(FLAGS) $(INCLUDES) -c src/Game.cpp -o $@
 
 build/main.o: src/main.cpp src/Game.h \
@@ -203,7 +205,8 @@ build/Level.o: src/Level.cpp src/Level.h \
 src/MapLoader.h src/ecs/ECS.h \
 src/Game.h src/ecs/components/Sprite.h \
 src/ecs/Registry.h src/ecs/components/Camera.h \
-src/Window.h src/ecs/components/SpriteAnimation.h
+src/Window.h src/ecs/components/SpriteAnimation.h \
+src/Event.h src/EventManager.h
 	$(CC) $(FLAGS) $(INCLUDES) -c src/Level.cpp -o $@
 
 .PHONY : clean

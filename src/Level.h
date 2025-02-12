@@ -13,7 +13,7 @@ public:
   Level(const Map&, const adv::Sprite&, const adv::Sprite&, const adv::Sprite&);
 
   void Load();
-  void UnloadECS();
+  void Unload();
 
   const adv::Camera& GetCamera() const { return m_Camera; }
   
