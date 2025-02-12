@@ -4,8 +4,9 @@
 #include "ecs/components/RigidBody.h"
 #include "ecs/components/Transform.h"
 
-#define PERCENT .4f
-#define SLOP    .01f
+#define PERCENT		.4f
+#define SLOP		.01f
+#define THRESHHOLD	.0001f
 
 extern Registry registry;
 
@@ -54,9 +55,11 @@ void CollisionSystem::ImpulseSolver(std::vector<adv::Collision>& cols)
 	float restitution = (ar.GetRestitution() * br.GetRestitution());
 	float j = -(1.0f + restitution) * speed / (aInvmass + bInvmass);
 	Vector2 impulse = normal * j;
-	
-	if (ar.IsDynamic()) ar.ApplyVelocity(impulse * aInvmass);
-	if (br.IsDynamic()) br.ApplyVelocity(impulse * -bInvmass);
+
+	if (Vector2Length(impulse) > THRESHHOLD) { 
+	  if (ar.IsDynamic()) ar.ApplyVelocity(impulse * aInvmass);
+	  if (br.IsDynamic()) br.ApplyVelocity(impulse * -bInvmass);
+	}
 
 	// friction
 	rvel = ar.GetVelocity() - br.GetVelocity();
@@ -74,9 +77,11 @@ void CollisionSystem::ImpulseSolver(std::vector<adv::Collision>& cols)
 	  mu = Vector2Length({ ar.GetDynamicFriction(), br.GetDynamicFriction() });
 	  friction = tangent * -j * mu;
 	}
-
-	if (ar.IsDynamic()) ar.ApplyVelocity(friction * aInvmass);
-	if (br.IsDynamic()) br.ApplyVelocity(friction * -bInvmass);
+	
+	if (Vector2Length(friction) > THRESHHOLD) { 
+	  if (ar.IsDynamic()) ar.ApplyVelocity(friction * aInvmass);
+	  if (br.IsDynamic()) br.ApplyVelocity(friction * -bInvmass);
+	}
   }
 }
 
@@ -96,9 +101,11 @@ void CollisionSystem::PositionSolver(std::vector<adv::Collision>& cols)
 
 	adv::Transform& at = registry.GetComponent<adv::Transform>(col.a);
 	adv::Transform& bt = registry.GetComponent<adv::Transform>(col.b);
-
-	if (ar.IsDynamic()) at.translation += correction * aInvmass;
-	if (br.IsDynamic()) bt.translation -= correction * bInvmass;
+	
+	if (Vector2Length(correction) > THRESHHOLD) { 
+	  if (ar.IsDynamic()) at.translation += correction * aInvmass;
+	  if (br.IsDynamic()) bt.translation -= correction * bInvmass;
+	}
   }
 }
 

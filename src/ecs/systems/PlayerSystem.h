@@ -13,4 +13,5 @@ class PlayerSystem : public System
 {
 public:
   void Update(float) override;
+  Vector2 CalculateStep(Vector2, Vector2);
 };

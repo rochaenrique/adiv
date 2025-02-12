@@ -9,10 +9,11 @@
 
 namespace adv
 {
-  Rectangle ToRect(const adv::Transform& t);
+  Rectangle ToRect(const adv::Transform&);
   
-  Rectangle ReCenter(const Rectangle& r);
-  Rectangle GetCenteredRect(const adv::Transform& t);
+  Rectangle ReCenter(const Rectangle&);
+  Rectangle GetCenteredRect(const adv::Transform&);
+  Vector2 CalculateMapNormal(const Rectangle&, const Rectangle&);
   
   void ToTop(adv::Transform&, float);
   void ToBottom(adv::Transform&, float);

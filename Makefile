@@ -170,7 +170,7 @@ src/ecs/components/Player.h src/util/Random.h \
 src/Level.h src/ecs/components/Camera.h \
 src/ecs/systems/CameraSystem.h src/ecs/systems/AnimatorSystem.h \
 src/Animation.h src/EventManager.h \
-src/Event.h
+src/Event.h src/animations/PlayerMovement.h
 	$(CC) $(FLAGS) $(INCLUDES) -c src/Game.cpp -o $@
 
 build/main.o: src/main.cpp src/Game.h \

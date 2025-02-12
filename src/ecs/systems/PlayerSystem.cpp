@@ -23,20 +23,8 @@ void PlayerSystem::Update(float)
 	  adv::Player& player = registry.GetComponent<adv::Player>(e);
 	  
 	  // calculate step
-	  Vector2 step = {};
-	  step.x = (float)(IsKeyDown(KEY_D) - IsKeyDown(KEY_A));
-	  if (step.x < 0) player.SetState(adv::PlayerState::WALK_LEFT);
-	  else if (step.x > 0) player.SetState(adv::PlayerState::WALK_RIGHT);
-	  else player.SetState(adv::PlayerState::IDLE);
-
-	  Vector2 vel = body.GetVelocity();
-	  if (std::abs(adv::IsWorldUp(vel)) <= V_MV_TOLERANCE && !player.IsJumping()) {
-		step.y = (float)(IsKeyDown(KEY_S) - IsKeyDown(KEY_W));
-		if (step.y < 0) { 
-		  player.SetJumping(true);
-		  player.SetState(adv::PlayerState::JUMP);
-		}
-	  }
+	  Vector2 step = CalculateStep(body.GetForce(), body.GetVelocity());
+	  player.SetStateFromStep(step);
 
 	  // change sprite animation
 	  adv::Sprite& sprite = registry.GetComponent<adv::Sprite>(e);
@@ -50,4 +38,19 @@ void PlayerSystem::Update(float)
 	  body.ApplyAcc(step);
 	}
   }
+
+}
+
+Vector2 PlayerSystem::CalculateStep(Vector2 force, Vector2 velocity)
+{
+  Vector2 step = Vector2Zero();
+	
+  step.x = (float)(IsKeyDown(KEY_D) - IsKeyDown(KEY_A));
+	
+  bool floating = adv::IsWorldUp(force) >= V_MV_TOLERANCE;
+  bool movingVert = std::abs(adv::IsWorldUp(velocity)) >= V_MV_TOLERANCE;
+  if (!(movingVert || floating)) 
+	step.y = (float)(IsKeyDown(KEY_S) - IsKeyDown(KEY_W));
+
+  return step;
 }

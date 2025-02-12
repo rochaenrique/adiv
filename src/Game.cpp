@@ -8,6 +8,7 @@
 #include "ecs/Components.h"
 #include "util/Random.h"
 #include "util/Helper.h"
+#include "animations/PlayerMovement.h"
 
 #define	SPRITE_DIR  "res/sprites"
 #define OLDMAN_PATH SPRITE_DIR"/old_man.png"
@@ -88,23 +89,18 @@ Entity Game::CreatePlayer(adv::Sprite sprite, const adv::Camera& cam, const Vect
   Entity e = registry.CreateEntity();
   Vector2 spriteSize = { (float)sprite.GetTexture()->width * .125f, (float)sprite.GetTexture()->height * .125f };
 
-  adv::Animation wl = WALK_LEFT_ANIMATION;
-  adv::Animation wr = WALK_RIGHT_ANIMATION;
-  adv::Animation ju = JUMP_ANIMATION;
-  adv::Animation id = IDLE_ANIMATION;
-  
   adv::Animator animator;
-  animator.Insert(adv::PlayerState::WALK_LEFT, wl);
-  animator.Insert(adv::PlayerState::WALK_RIGHT, wr);
-  animator.Insert(adv::PlayerState::JUMP, ju);
-  animator.Insert(adv::PlayerState::IDLE, id);
+  animator.Insert(adv::PlayerState::WALK_LEFT, WALK_LEFT_ANIMATION);
+  animator.Insert(adv::PlayerState::WALK_RIGHT, WALK_RIGHT_ANIMATION);
+  animator.Insert(adv::PlayerState::JUMP, JUMP_ANIMATION);
+  animator.Insert(adv::PlayerState::IDLE, IDLE_ANIMATION);
   animator.ChangeTo(adv::PlayerState::IDLE);
 
   registry.AddComponent(e, adv::Player());
   registry.AddComponent(e, adv::RigidBody(Vector2Zero(), Vector2Zero(),
 										  100.0f, 100.0f, 50.0f, 0.01f, true));
   registry.AddComponent(e, adv::Transform(ipos, spriteSize * .25f, Vector2Zero()));
-  registry.AddComponent(e, adv::Collider(spriteSize * .25f));
+  registry.AddComponent(e, adv::Collider(spriteSize * .25f, false));
   registry.AddComponent(e, sprite);
   registry.AddComponent(e, cam);
   registry.AddComponent(e, animator);
@@ -218,7 +214,7 @@ void Game::InitSystems()
 
   m_DrawSystems = {
 	renderSystem,
-	// renderCollidersSystem,
+	renderCollidersSystem,
   };
 }
 

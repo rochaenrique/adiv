@@ -2,6 +2,8 @@
 #include <iomanip>
 #include <string>
 
+#define OVERLAP_TH .0001f
+
 namespace adv
 {
   Rectangle ReCenter(const Rectangle& r)
@@ -27,6 +29,19 @@ namespace adv
   Rectangle GetCenteredRect(const adv::Transform& t)
   {
 	return ReCenter(ToRect(t));
+  }
+
+  Vector2 CalculateMapNormal(const Rectangle& a, const Rectangle& b)
+  {
+	float xoverlap = std::min(a.x + a.width, b.x + b.width) - std::max(a.x, b.x);
+	float yoverlap = std::min(a.y + a.height, b.y + b.height) - std::max(a.y, b.y);
+
+	if (std::fabs(xoverlap) < OVERLAP_TH) xoverlap = 0;
+	if (std::fabs(yoverlap) < OVERLAP_TH) yoverlap = 0;
+
+	return (xoverlap < yoverlap)
+	  ? Vector2{ a.x > b.x ? 1.0f : -1.0f, 0.0f }
+	  : Vector2{ 0.0f, a.y > b.y ? 1.0f : -1.0f };
   }
   
   void ToTop(adv::Transform& t, float y)

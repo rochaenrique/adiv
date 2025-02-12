@@ -28,16 +28,13 @@ namespace adv
   {
   public:
 	Collider()
-	  : rectangle{0, 0, 0, 0} {};
+	  : rectangle{0, 0, 0, 0}, m_IsMap{false} {};
 	
-	Collider(Rectangle r)
-	  : rectangle{r} {};
+	Collider(float w, float h, bool m)
+	  : rectangle{0, 0, w, h}, m_IsMap{m} {};
 
-	Collider(float w, float h)
-	  : rectangle{0, 0, w, h} {};
-
-	Collider(Vector2 sz)
-	  : rectangle{0, 0, sz.x, sz.y} {};
+	Collider(Vector2 sz, bool m)
+	  : rectangle{0, 0, sz.x, sz.y}, m_IsMap{m} {};
 
 	void UpdateCenter(const Vector2 c)
 	{
@@ -52,11 +49,13 @@ namespace adv
 	  m_Trigger = true;
 	};
 	bool IsTrigger() const { return m_Trigger; };
+	bool IsMap() const { return m_IsMap; };
 	static CollisionPoints TestCollision(Collider&, Collider&);
 	
 	Rectangle rectangle;
 	CollisionCallback onCollision;
   private:
+	bool m_IsMap;
 	bool m_Trigger = false;
   };
 

@@ -22,10 +22,10 @@ void Level::Load()
   Vector2 size = { Window::GetWidth() / m_Map.grid.x, Window::GetHeight() / m_Map.grid.y };
   for (size_t i = 0; i < m_Map.tiles.size() && i < m_Map.grid.y; i++) 
 	for (size_t j = 0; j < m_Map.tiles[i].size() && j < m_Map.grid.x; j++) 
-	  m_Entities.push_back(Game::CreateTile(m_TileSprite, m_Map.tiles[i][j], size, i, m_Map.grid.y, adv::Collider(size)));
+	  m_Entities.push_back(Game::CreateTile(m_TileSprite, m_Map.tiles[i][j], size, i, m_Map.grid.y, adv::Collider(size, true)));
 
   //TODO: TEST
-  adv::Collider flagCollider(size.x * .1f, size.y);
+  adv::Collider flagCollider(size.x * .1f, size.y, true);
   flagCollider.SetCollisionCallback([](const adv::Collision&, float) {
 	EventManager::Get().Emit<CheckPointEvent>();
   });
