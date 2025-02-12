@@ -6,7 +6,6 @@
 #include "ecs/components/Transform.h"
 #include "util/Helper.h"
 #include "Window.h"
-#include <iostream>
 
 extern Registry registry;
 

@@ -8,9 +8,10 @@
 #include "util/Random.h"
 #include "util/Helper.h"
 
-#define SPRITE_DIR  "res/sprites"
+#define	SPRITE_DIR  "res/sprites"
 #define OLDMAN_PATH SPRITE_DIR"/old_man.png"
 #define TILES_PATH  SPRITE_DIR"/tiles.png"
+#define FLAG_PATH	SPRITE_DIR"/flag.png"
 
 Registry registry;
 
@@ -22,6 +23,7 @@ Game::Game(const WindowOptions& wopt)
 
   m_Textures.emplace_back(std::make_shared<Texture2D>(LoadTexture(OLDMAN_PATH)));
   m_Textures.emplace_back(std::make_shared<Texture2D>(LoadTexture(TILES_PATH)));
+  m_Textures.emplace_back(std::make_shared<Texture2D>(LoadTexture(FLAG_PATH)));
   
   // ECS 
   registry.Init();
@@ -40,12 +42,12 @@ void Game::Run()
   while (m_Running && (m_Running = !WindowShouldClose())) {
 	m_DT = GetFrameTime();
 	ClearBackground(SKYBLUE);
+	
+	if (IsKeyPressed(KEY_L)) 
+	  NextLevel();
 
 	for (const auto& s : m_UpdateSystems)
 	  s->Update(m_DT);
-
-	if (IsKeyPressed(KEY_L)) 
-	  NextLevel();
 
 	BeginDrawing();
 	  DrawFPS(0, 0);
@@ -66,11 +68,17 @@ Entity Game::CreatePlayer(adv::Sprite sprite, const adv::Camera& cam, const Vect
 {
   Entity e = registry.CreateEntity();
   Vector2 spriteSize = { (float)sprite.GetTexture()->width * .125f, (float)sprite.GetTexture()->height * .125f };
+
+  adv::Animation wl = WALK_LEFT_ANIMATION;
+  adv::Animation wr = WALK_RIGHT_ANIMATION;
+  adv::Animation ju = JUMP_ANIMATION;
+  adv::Animation id = IDLE_ANIMATION;
+  
   adv::Animator animator;
-  animator.Insert(adv::PlayerState::WALK_LEFT,  WALK_LEFT_ANIMATION);
-  animator.Insert(adv::PlayerState::WALK_RIGHT, WALK_RIGHT_ANIMATION);
-  animator.Insert(adv::PlayerState::JUMP,       JUMP_ANIMATION);
-  animator.Insert(adv::PlayerState::IDLE,       IDLE_ANIMATION);
+  animator.Insert(adv::PlayerState::WALK_LEFT, wl);
+  animator.Insert(adv::PlayerState::WALK_RIGHT, wr);
+  animator.Insert(adv::PlayerState::JUMP, ju);
+  animator.Insert(adv::PlayerState::IDLE, id);
   animator.ChangeTo(adv::PlayerState::IDLE);
 
   registry.AddComponent(e, adv::Player());
@@ -130,7 +138,7 @@ void Game::InitSystems()
 	registry.SetSystemSignature<CollisionSystem>(sign);
   }
   
-  auto playerSystem  = registry.RegisterSystem<PlayerSystem>();
+  auto playerSystem = registry.RegisterSystem<PlayerSystem>();
   {
 	Signature sign;
 	sign.set(registry.GetComponentID<adv::Sprite>());
@@ -141,7 +149,7 @@ void Game::InitSystems()
 	registry.SetSystemSignature<PlayerSystem>(sign);
   }
 
-  auto renderSystem  = registry.RegisterSystem<RenderSystem>();
+  auto renderSystem = registry.RegisterSystem<RenderSystem>();
   {
 	Signature sign;
 	sign.set(registry.GetComponentID<adv::Sprite>());
@@ -149,26 +157,34 @@ void Game::InitSystems()
 	registry.SetSystemSignature<RenderSystem>(sign);
   }
   
-  auto renderCollidersSystem  = registry.RegisterSystem<RenderCollidersSystem>();
+  auto renderCollidersSystem = registry.RegisterSystem<RenderCollidersSystem>();
   {
 	Signature sign;
 	sign.set(registry.GetComponentID<adv::Collider>());
 	registry.SetSystemSignature<RenderCollidersSystem>(sign);
   }
 
-  auto cameraSystem  = registry.RegisterSystem<CameraSystem>();
+  auto cameraSystem = registry.RegisterSystem<CameraSystem>();
   {
 	Signature sign;
 	sign.set(registry.GetComponentID<adv::Camera>());
 	sign.set(registry.GetComponentID<adv::Transform>());
 	registry.SetSystemSignature<CameraSystem>(sign);
   }
+  
+  auto animatorSystem = registry.RegisterSystem<AnimatorSystem>();
+  {
+	Signature sign;
+	sign.set(registry.GetComponentID<adv::Animator>());
+	registry.SetSystemSignature<AnimatorSystem>(sign);
+  }
 
   m_UpdateSystems = {
 	playerSystem,
 	collisionSystem,
 	physicsSystem,
-	cameraSystem
+	cameraSystem,
+	animatorSystem,
   };
 
   m_DrawSystems = {
@@ -179,20 +195,23 @@ void Game::InitSystems()
 
 void Game::InitLevels()
 {
-  adv::Sprite pSprite(m_Textures.at(0), { 8, 8 }, 0);
-  adv::Sprite tSprite(m_Textures.at(1), { 10, 6 }, 0);
+  adv::Sprite playerSprite(m_Textures.at(0), { 8, 8 }, 0);
+  adv::Sprite tileSprite(m_Textures.at(1), { 10, 6 }, 0);
+  adv::Sprite flagSprite(m_Textures.at(2), { 5, 1 }, 0);
 
   m_MapLoader->LoadFile("level1");
   m_MapLoader->LoadFile("level2");
   m_Levels.reserve(2);
   
   m_Levels.emplace_back(m_MapLoader->GetMap("level1"),
-						pSprite,
-						tSprite);
+						playerSprite,
+						tileSprite, 
+						flagSprite);
   
   m_Levels.emplace_back(m_MapLoader->GetMap("level2"),
-						pSprite,
-						tSprite);
+						playerSprite,
+						tileSprite, 
+						flagSprite);
 
   m_CurrentLevel = m_Levels.begin();
 }

@@ -22,11 +22,11 @@
 - [x] General basic player movement
 - [x] Map loader with textures
 - [x] 2d Camera
-- [ ] Player sprite animations
 - [ ] Checkpoints and proper collisions
 - [ ] Level reset when die
 - [ ] Full basic gameplay with camera updates
-- [ ] Very basic UI 
+- [ ] Very basic UI
+- [ ] Player sprite animations
 - [ ] NPC's with scripting
 - [ ] Multiple levels with diferent sprites
 - [ ] In game interactive elements

@@ -11,7 +11,7 @@
 
 extern Registry registry;
 
-void PlayerSystem::Update(float dt)
+void PlayerSystem::Update(float)
 { 
   for (const Entity& e : m_Entities) {
 	if (IsKeyPressed(KEY_R)) { // TODO: TEMPORARY FOR TESTING
@@ -41,11 +41,8 @@ void PlayerSystem::Update(float dt)
 	  // change sprite animation
 	  adv::Sprite& sprite = registry.GetComponent<adv::Sprite>(e);
 	  adv::Animator& anim = registry.GetComponent<adv::Animator>(e);
-	  anim.Update(dt);
 	  anim.ChangeTo(player.GetState());
 	  sprite.SetIndex((size_t)anim.Value());
-	  std::cout << "State: " << player.GetState() << ", Value: " <<
-		(size_t)anim.Value() << '\n';
 	  
 	  // apply step
 	  step.x *= player.IsJumping() ? H_JUMP_MULT : H_NO_JUMP_MULT;

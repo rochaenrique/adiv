@@ -37,6 +37,7 @@ build/PhysicsSystem.o \
 build/PlayerSystem.o \
 build/RenderCollidersSystem.o \
 build/RenderSystem.o \
+build/AnimatorSystem.o \
 build/Game.o \
 build/Level.o \
 build/main.o \
@@ -123,7 +124,7 @@ src/util/Helper.h src/ecs/Components.h src/ecs/components/Player.h \
 src/ecs/components/Collider.h src/ecs/Registry.h \
 src/ecs/managers/SystemManager.h src/ecs/managers/EntityManager.h \
 src/ecs/managers/ComponentManager.h src/ecs/managers/ComponentArray.h \
-src/ecs/components/Camera.h
+src/ecs/components/Camera.h 
 	$(CC) $(FLAGS) $(INCLUDES) -c src/ecs/systems/RenderSystem.cpp -o $@
 
 build/CameraSystem.o: src/ecs/systems/CameraSystem.cpp \
@@ -137,6 +138,16 @@ src/ecs/components/Camera.h src/util/Helper.h \
 src/Window.h
 	$(CC) $(FLAGS) $(INCLUDES) -c src/ecs/systems/CameraSystem.cpp -o $@
 
+build/AnimatorSystem.o: src/ecs/systems/AnimatorSystem.cpp \
+src/ecs/systems/AnimatorSystem.h src/ecs/ECS.h src/ecs/components/Sprite.h \
+src/ecs/components/Transform.h src/ecs/components/RigidBody.h \
+src/ecs/Components.h src/ecs/components/Player.h \
+src/ecs/components/Collider.h src/ecs/Registry.h \
+src/ecs/managers/SystemManager.h src/ecs/managers/EntityManager.h \
+src/ecs/managers/ComponentManager.h src/ecs/managers/ComponentArray.h \
+src/ecs/components/Animator.h 
+	$(CC) $(FLAGS) $(INCLUDES) -c src/ecs/systems/AnimatorSystem.cpp -o $@
+
 build/Game.o: src/Game.cpp src/Game.h \
 src/Window.h src/MapLoader.h \
 src/ecs/ECS.h src/ecs/Registry.h src/ecs/managers/SystemManager.h \
@@ -149,7 +160,7 @@ src/ecs/systems/RenderCollidersSystem.h src/ecs/systems/RenderSystem.h \
 src/ecs/components/Sprite.h src/util/Helper.h src/ecs/Components.h \
 src/ecs/components/Player.h src/util/Random.h \
 src/Level.h src/ecs/components/Camera.h \
-src/ecs/systems/CameraSystem.h
+src/ecs/systems/CameraSystem.h src/ecs/systems/AnimatorSystem.h
 	$(CC) $(FLAGS) $(INCLUDES) -c src/Game.cpp -o $@
 
 build/main.o: src/main.cpp src/Game.h \
@@ -163,7 +174,7 @@ src/ecs/components/Transform.h src/ecs/systems/PlayerSystem.h \
 src/ecs/systems/RenderCollidersSystem.h src/ecs/systems/RenderSystem.h \
 src/ecs/components/Sprite.h src/util/Helper.h src/ecs/Components.h \
 src/ecs/components/Player.h src/ecs/components/Camera.h \
-src/ecs/systems/CameraSystem.h
+src/ecs/systems/CameraSystem.h src/ecs/systems/AnimatorSystem.h
 	$(CC) $(FLAGS) $(INCLUDES) -c src/main.cpp -o $@
 
 build/Helper.o: src/util/Helper.cpp src/util/Helper.h \
@@ -184,7 +195,7 @@ build/Level.o: src/Level.cpp src/Level.h \
 src/MapLoader.h src/ecs/ECS.h \
 src/Game.h src/ecs/components/Sprite.h \
 src/ecs/Registry.h src/ecs/components/Camera.h \
-src/Window.h
+src/Window.h src/ecs/components/Animator.h
 	$(CC) $(FLAGS) $(INCLUDES) -c src/Level.cpp -o $@
 
 .PHONY : clean

@@ -10,16 +10,19 @@
 class Level
 {
 public:
-  Level(const Map&, const adv::Sprite&, const adv::Sprite&);
+  Level(const Map&, const adv::Sprite&, const adv::Sprite&, const adv::Sprite&);
 
   void Load();
   void UnloadECS();
 
   const adv::Camera& GetCamera() const { return m_Camera; }
+  
 private:
   const Map& m_Map;
   const adv::Sprite m_PlayerSprite;
   const adv::Sprite m_TileSprite;
+  const adv::Sprite m_FlagSprite;
+
   adv::Camera m_Camera;
   std::vector<Entity> m_Entities {};
 };

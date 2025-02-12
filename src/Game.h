@@ -33,8 +33,6 @@ private:
   std::vector<std::shared_ptr<System>> m_UpdateSystems;
   std::vector<std::shared_ptr<System>> m_DrawSystems;
   
-  Camera2D m_Camera;
-
   void InitComponents() const;
   void InitSystems();
   void InitLevels();
