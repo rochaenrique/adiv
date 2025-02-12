@@ -50,10 +50,17 @@ then
 	LIBS="-lraylib"
 fi
 
-# Run comand
-# to get dependencies use flag -M (check man)
 
-CMD="g++ $FLAGS $SOURCES -I$RAY_DIR/include/ -I$SRC_DIR $LIB_DIRS $LIBS -o adiv"
+# to get dependencies use flag -M (check man)
+DEPS=""
+for f in $SOURCES
+do
+	DEPS="-MM $f -MF $(basename $f .cpp) $DEPS"
+done
+CMD="g++ $FLAGS -MMD $SOURCES -I$RAY_DIR/include/ -I$SRC_DIR $LIB_DIRS $LIBS -o adiv"
+
+# Run comand
+# CMD="g++ $FLAGS $SOURCES -I$RAY_DIR/include/ -I$SRC_DIR $LIB_DIRS $LIBS -o adiv"
 echo Compile command:
 echo $CMD
 eval $CMD

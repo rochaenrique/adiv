@@ -21,11 +21,11 @@
 - [x] Collision Responder
 - [x] General basic player movement
 - [x] Map loader with textures
-- [ ] 2d Camera
+- [x] 2d Camera
 - [ ] Player sprite animations
 - [ ] Checkpoints and proper collisions
 - [ ] Level reset when die
-- [ ] Full basic gameplay
+- [ ] Full basic gameplay with camera updates
 - [ ] Very basic UI 
 - [ ] NPC's with scripting
 - [ ] Multiple levels with diferent sprites

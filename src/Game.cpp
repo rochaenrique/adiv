@@ -36,7 +36,7 @@ void Game::Run()
 {
   m_Running = true;
   m_CurrentLevel->Load();
-  
+
   while (m_Running && (m_Running = !WindowShouldClose())) {
 	m_DT = GetFrameTime();
 	ClearBackground(SKYBLUE);
@@ -46,7 +46,7 @@ void Game::Run()
 
 	if (IsKeyPressed(KEY_L)) 
 	  NextLevel();
-	
+
 	BeginDrawing();
 	  DrawFPS(0, 0);
 	  BeginBlendMode(BLEND_ALPHA);
@@ -66,7 +66,13 @@ Entity Game::CreatePlayer(adv::Sprite sprite, const adv::Camera& cam, const Vect
 {
   Entity e = registry.CreateEntity();
   Vector2 spriteSize = { (float)sprite.GetTexture()->width * .125f, (float)sprite.GetTexture()->height * .125f };
-  
+  adv::Animator animator;
+  animator.Insert(adv::PlayerState::WALK_LEFT,  WALK_LEFT_ANIMATION);
+  animator.Insert(adv::PlayerState::WALK_RIGHT, WALK_RIGHT_ANIMATION);
+  animator.Insert(adv::PlayerState::JUMP,       JUMP_ANIMATION);
+  animator.Insert(adv::PlayerState::IDLE,       IDLE_ANIMATION);
+  animator.ChangeTo(adv::PlayerState::IDLE);
+
   registry.AddComponent(e, adv::Player());
   registry.AddComponent(e, adv::RigidBody(Vector2Zero(), Vector2Zero(),
 										  100.0f, 100.0f, 50.0f, 0.01f, true));
@@ -74,7 +80,7 @@ Entity Game::CreatePlayer(adv::Sprite sprite, const adv::Camera& cam, const Vect
   registry.AddComponent(e, adv::Collider(spriteSize * .25f));
   registry.AddComponent(e, sprite);
   registry.AddComponent(e, cam);
-  
+  registry.AddComponent(e, animator);
   return e;
 }
 
@@ -102,6 +108,7 @@ void Game::InitComponents() const
   registry.RegisterComponent<adv::RigidBody>();
   registry.RegisterComponent<adv::Transform>();
   registry.RegisterComponent<adv::Camera>();
+  registry.RegisterComponent<adv::Animator>();
 }
 
 void Game::InitSystems()
@@ -129,6 +136,8 @@ void Game::InitSystems()
 	sign.set(registry.GetComponentID<adv::Sprite>());
 	sign.set(registry.GetComponentID<adv::Player>());
 	sign.set(registry.GetComponentID<adv::RigidBody>());
+	sign.set(registry.GetComponentID<adv::Animator>());
+
 	registry.SetSystemSignature<PlayerSystem>(sign);
   }
 

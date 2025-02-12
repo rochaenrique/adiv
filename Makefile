@@ -25,43 +25,25 @@ endif
 
 EXECUTABLE = adiv
 
-SOURCES = src/ecs/components/Collider.cpp \
-src/ecs/components/Sprite.cpp \
-src/ecs/managers/ComponentManager.cpp \
-src/ecs/managers/EntityManager.cpp \
-src/ecs/managers/SystemManager.cpp \
-src/ecs/Registry.cpp \
-src/ecs/systems/CollisionSystem.cpp \
-src/ecs/systems/PhysicsSystem.cpp \
-src/ecs/systems/PlayerSystem.cpp \
-src/ecs/systems/RenderCollidersSystem.cpp \
-src/ecs/systems/RenderSystem.cpp \
-src/ecs/systems/CameraSystem.cpp \
-src/Game.cpp \
-src/main.cpp \
-src/util/Helper.cpp \
-src/Window.cpp \
-src/MapLoader.cpp \
-src/Level.cpp
-
 OBJECTS = \
 build/Collider.o \
 build/ComponentManager.o \
 build/EntityManager.o \
 build/SystemManager.o \
 build/Registry.o \
+build/CameraSystem.o \
 build/CollisionSystem.o \
 build/PhysicsSystem.o \
 build/PlayerSystem.o \
 build/RenderCollidersSystem.o \
-build/CameraSystem.o \
 build/RenderSystem.o \
 build/Game.o \
+build/Level.o \
 build/main.o \
+build/MapLoader.o \
 build/Helper.o \
 build/Window.o \
-build/MapLoader.o \
-build/Level.o
+
 
 $(EXECUTABLE): $(OBJECTS)
 	$(CC) $(FLAGS) $(OBJECTS) $(INCLUDES) $(LIB_DIRS) $(LIBS) -o $@
@@ -119,7 +101,8 @@ src/ecs/managers/SystemManager.h src/ecs/managers/EntityManager.h \
 src/ecs/managers/ComponentManager.h src/ecs/managers/ComponentArray.h \
 src/ecs/components/RigidBody.h \
 src/ecs/components/Transform.h \
-src/util/Helper.h src/Animation.h
+src/util/Helper.h src/Animation.h \
+src/ecs/components/Animator.h
 	$(CC) $(FLAGS) $(INCLUDES) -c src/ecs/systems/PlayerSystem.cpp -o $@
 
 build/RenderCollidersSystem.o: src/ecs/systems/RenderCollidersSystem.cpp \
