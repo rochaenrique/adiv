@@ -8,3 +8,4 @@
 #include "components/Transform.h"
 #include "components/Animator.h"
 #include "components/Camera.h"
+#include "components/SpriteAnimation.h"

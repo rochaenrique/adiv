@@ -7,3 +7,4 @@
 #include "systems/RenderSystem.h"           
 #include "systems/CameraSystem.h"           
 #include "systems/AnimatorSystem.h"           
+#include "systems/SpriteAnimationSystem.h"           

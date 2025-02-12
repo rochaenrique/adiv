@@ -4,7 +4,8 @@
 #include <iostream>
 #include <unordered_map>
 
-namespace adv {
+namespace adv
+{
   class Animator
   {
   public:

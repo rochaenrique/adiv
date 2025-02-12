@@ -1,7 +1,7 @@
 #include "Level.h"
 #include "Game.h"
 #include "ecs/Registry.h"
-#include "ecs/components/Animator.h"
+#include "ecs/components/SpriteAnimation.h"
 #include "Window.h"
 
 Level::Level(const Map& map, const adv::Sprite& pSprite, const adv::Sprite& tSprite, const adv::Sprite& fSprite)
@@ -25,13 +25,13 @@ void Level::Load()
   Entity flag = Game::CreateTile(m_FlagSprite, { 1, 5 }, size, 5, m_Map.grid.y);
   adv::Animation anim({
 	  {
-		.from		= 0.0f,
-		.to		= 5.0f,
-		.duration = 5.0f,
+		.from	  = 0.0f,
+		.to		  = 6.0f,
+		.duration = 1.5f,
 	  }
-	}, true);
+	});
   
-  adv::Animator animator;
+  adv::SpriteAnimation animator;
   animator.Insert(1, anim); 
   animator.ChangeTo(1);
   registry.AddComponent(flag, animator);

@@ -17,7 +17,7 @@ adv::Animation(								\
 	 .duration	= .5f						\
   },										\
 }											\
-, true)										\
+)											\
 
 #define WALK_LEFT_ANIMATION				    \
 adv::Animation(								\
@@ -33,7 +33,7 @@ adv::Animation(								\
 	 .duration	= .5f						\
   }										    \
 }											\
-, true)										\
+)											\
  
 #define JUMP_ANIMATION			            \
 adv::Animation(					            \
@@ -44,7 +44,7 @@ adv::Animation(					            \
 	 .duration	= 3.0f			            \
   },							            \
 }								            \
-, true)										\
+)											\
 
 #define IDLE_ANIMATION			            \
 adv::Animation(					            \
@@ -55,7 +55,7 @@ adv::Animation(					            \
 	 .duration	= .1f			            \
   },							            \
 }								            \
-, true)										\
+)											\
 
 namespace adv
 {

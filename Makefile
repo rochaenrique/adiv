@@ -38,13 +38,13 @@ build/PlayerSystem.o \
 build/RenderCollidersSystem.o \
 build/RenderSystem.o \
 build/AnimatorSystem.o \
+build/SpriteAnimationSystem.o \
+build/Window.o \
 build/Game.o \
 build/Level.o \
 build/main.o \
 build/MapLoader.o \
-build/Helper.o \
-build/Window.o \
-
+build/Helper.o 
 
 $(EXECUTABLE): $(OBJECTS)
 	$(CC) $(FLAGS) $(OBJECTS) $(INCLUDES) $(LIB_DIRS) $(LIBS) -o $@
@@ -114,7 +114,7 @@ src/ecs/managers/SystemManager.h src/ecs/managers/EntityManager.h \
 src/ecs/managers/ComponentManager.h src/ecs/managers/ComponentArray.h \
 src/util/Helper.h src/ecs/Components.h src/ecs/components/Player.h \
 src/ecs/components/RigidBody.h src/ecs/components/Sprite.h \
-src/ecs/components/Transform.h src/ecs/components/Camera.h
+src/ecs/components/Transform.h src/ecs/components/Camera.h 
 	$(CC) $(FLAGS) $(INCLUDES) -c src/ecs/systems/RenderCollidersSystem.cpp -o $@
 
 build/RenderSystem.o: src/ecs/systems/RenderSystem.cpp \
@@ -147,6 +147,14 @@ src/ecs/managers/SystemManager.h src/ecs/managers/EntityManager.h \
 src/ecs/managers/ComponentManager.h src/ecs/managers/ComponentArray.h \
 src/ecs/components/Animator.h 
 	$(CC) $(FLAGS) $(INCLUDES) -c src/ecs/systems/AnimatorSystem.cpp -o $@
+
+build/SpriteAnimationSystem.o: src/ecs/systems/SpriteAnimationSystem.cpp \
+src/ecs/systems/SpriteAnimationSystem.h src/ecs/ECS.h src/ecs/components/Sprite.h \
+src/ecs/Components.h src/ecs/Registry.h \
+src/ecs/managers/SystemManager.h src/ecs/managers/EntityManager.h \
+src/ecs/managers/ComponentManager.h src/ecs/managers/ComponentArray.h \
+src/ecs/components/Animator.h src/ecs/components/SpriteAnimation.h
+	$(CC) $(FLAGS) $(INCLUDES) -c src/ecs/systems/SpriteAnimationSystem.cpp -o $@
 
 build/Game.o: src/Game.cpp src/Game.h \
 src/Window.h src/MapLoader.h \
@@ -195,7 +203,7 @@ build/Level.o: src/Level.cpp src/Level.h \
 src/MapLoader.h src/ecs/ECS.h \
 src/Game.h src/ecs/components/Sprite.h \
 src/ecs/Registry.h src/ecs/components/Camera.h \
-src/Window.h src/ecs/components/Animator.h
+src/Window.h src/ecs/components/SpriteAnimation.h
 	$(CC) $(FLAGS) $(INCLUDES) -c src/Level.cpp -o $@
 
 .PHONY : clean

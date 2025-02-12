@@ -18,7 +18,7 @@ namespace adv
 	  : m_Keyframes{{0.0f, 0.0f, 1.0f}}
 	{}
 
-	Animation(std::vector<Keyframe> kfs, bool)
+	Animation(std::vector<Keyframe> kfs)
 	  : m_Keyframes{kfs}
 	{}
 	

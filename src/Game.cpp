@@ -117,6 +117,7 @@ void Game::InitComponents() const
   registry.RegisterComponent<adv::Transform>();
   registry.RegisterComponent<adv::Camera>();
   registry.RegisterComponent<adv::Animator>();
+  registry.RegisterComponent<adv::SpriteAnimation>();
 }
 
 void Game::InitSystems()
@@ -178,6 +179,14 @@ void Game::InitSystems()
 	sign.set(registry.GetComponentID<adv::Animator>());
 	registry.SetSystemSignature<AnimatorSystem>(sign);
   }
+  
+  auto spriteAnimationSystem = registry.RegisterSystem<SpriteAnimationSystem>();
+  {
+	Signature sign;
+	sign.set(registry.GetComponentID<adv::SpriteAnimation>());
+	sign.set(registry.GetComponentID<adv::Sprite>());
+	registry.SetSystemSignature<SpriteAnimationSystem>(sign);
+  }
 
   m_UpdateSystems = {
 	playerSystem,
@@ -185,6 +194,7 @@ void Game::InitSystems()
 	physicsSystem,
 	cameraSystem,
 	animatorSystem,
+	spriteAnimationSystem,
   };
 
   m_DrawSystems = {
