@@ -6,11 +6,17 @@
 #include <optional>
 #include <raylib.h>
 
+struct Tile
+{
+  Vector2 pos;
+  size_t texture, spriteIndex;
+};
+
 struct Map
 {
-  Vector2 playerInitialPos;
+  Vector2 playerInitialPos, flagPos;
   Vector2 grid;
-  std::vector<std::vector<std::pair<size_t, size_t>>> tiles {{}};
+  std::vector<Tile> tiles {};
 };
 
 class MapLoader

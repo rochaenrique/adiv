@@ -19,7 +19,7 @@ public:
   bool OnEvent(Event&);
 
   static Entity CreatePlayer(adv::Sprite, const adv::Camera&, const Vector2);
-  static Entity CreateTile(adv::Sprite, std::pair<size_t, size_t>, Vector2, size_t, size_t, const adv::Collider&);
+  static Entity CreateTile(adv::Sprite, Tile, Vector2, Vector2, const adv::Collider&);
 
 private:
   float m_DT = 0.0f;

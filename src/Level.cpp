@@ -1,4 +1,5 @@
 #include "Level.h"
+#include <raymath.h>
 #include "Game.h"
 #include "ecs/Registry.h"
 #include "ecs/components/SpriteAnimation.h"
@@ -16,21 +17,27 @@ extern Registry registry;
 
 void Level::Load()
 {
-  m_Entities.push_back(Game::CreatePlayer(m_PlayerSprite, m_Camera, m_Map.playerInitialPos));
-
-
   Vector2 size = { Window::GetWidth() / m_Map.grid.x, Window::GetHeight() / m_Map.grid.y };
-  for (size_t i = 0; i < m_Map.tiles.size() && i < m_Map.grid.y; i++) 
-	for (size_t j = 0; j < m_Map.tiles[i].size() && j < m_Map.grid.x; j++) 
-	  m_Entities.push_back(Game::CreateTile(m_TileSprite, m_Map.tiles[i][j], size, i, m_Map.grid.y, adv::Collider(size, true)));
 
-  //TODO: TEST
-  adv::Collider flagCollider(size.x * .1f, size.y, true);
+  Vector2 worldPos = {0, 0};
+  for (const Tile& tile : m_Map.tiles) {
+	if (tile.pos.x >= worldPos.x) 
+	  worldPos.x = tile.pos.x;
+	m_Entities.push_back(
+						 Game::CreateTile(m_TileSprite, tile, m_Map.grid, size, adv::Collider(size, true))
+						 );
+  }
+
+  worldPos -= m_Map.playerInitialPos;
+  m_Entities.push_back(Game::CreatePlayer(m_PlayerSprite, m_Camera, { worldPos.x * size.x, worldPos.y * size.y }));
+
+    adv::Collider flagCollider(size, true);
   flagCollider.SetCollisionCallback([](const adv::Collision&, float) {
-	EventManager::Get().Emit<CheckPointEvent>();
+	//EventManager::Get().Emit<CheckPointEvent>();
   });
-  
-  Entity flag = Game::CreateTile(m_FlagSprite, { 1, 5 }, size, 5, m_Map.grid.y, flagCollider);
+
+  //flag should be placed at the end (left most)
+  Entity flag = Game::CreateTile(m_FlagSprite, Tile{ m_Map.flagPos, 0, 0 }, size, m_Map.grid, flagCollider);
   adv::Animation anim({
 	  {
 		.from	  = 0.0f,

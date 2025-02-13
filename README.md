@@ -23,7 +23,7 @@
 - [x] Map loader with textures
 - [x] 2d Camera
 - [x] Checkpoints
-- [ ] Proper collisions with floor
+- [x] Proper collisions with floor
 - [ ] Full basic gameplay with camera updates
 - [ ] Level reset when die
 - [ ] Very basic UI

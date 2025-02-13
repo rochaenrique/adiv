@@ -49,11 +49,6 @@ void Game::Run()
   while (m_Running && (m_Running = !WindowShouldClose())) {
 	m_DT = GetFrameTime();
 	ClearBackground(SKYBLUE);
-	EventManager::Get().Dispatch();
-
-	if (m_PendingNextLevel) 
-	  NextLevel();
-	
 	for (const auto& s : m_UpdateSystems)
 	  s->Update(m_DT);
 
@@ -68,6 +63,11 @@ void Game::Run()
 	    EndMode2D();
 	  EndBlendMode();
 	EndDrawing();
+
+	EventManager::Get().Dispatch();
+
+	if (m_PendingNextLevel) 
+	  NextLevel();
   }
 }
 
@@ -104,22 +104,28 @@ Entity Game::CreatePlayer(adv::Sprite sprite, const adv::Camera& cam, const Vect
   registry.AddComponent(e, sprite);
   registry.AddComponent(e, cam);
   registry.AddComponent(e, animator);
+
+  std::cout << "Creating player at:\n\t" << ipos << '\n';
+
   return e;
 }
 
-Entity Game::CreateTile(adv::Sprite sprite, std::pair<size_t, size_t> tile, Vector2 size, size_t row, size_t nrows, const adv::Collider& collider)
+Entity Game::CreateTile(adv::Sprite sprite, Tile tile, Vector2 grid, Vector2 size, const adv::Collider& collider)
 {
   Entity e = registry.CreateEntity();
-  sprite.SetIndex(tile.first);
+  sprite.SetIndex(tile.spriteIndex);
   
-  Vector2 pos = { size.x * (tile.second + .5f), 0 };
+  Vector2 pos = { size.x * (tile.pos.x + .5f), 0 };
   adv::Transform transform(pos, size, Vector2Zero());
-  adv::ToBottom(transform, size.y * (nrows - row));
+  adv::ToBottom(transform, size.y * (grid.y - tile.pos.y));
 
   registry.AddComponent(e, adv::RigidBody::CreateStatic(10.0f, 5.0f));
   registry.AddComponent(e, sprite);
   registry.AddComponent(e, transform);
   registry.AddComponent(e, collider);
+
+  std::cout << "Creating tile at:\n\t" << transform <<
+	"\n\tfrom tile: " << tile.pos << ", size: " << size << '\n'; 
   return e;
 }
 
@@ -243,7 +249,6 @@ void Game::InitLevels()
 
 void Game::NextLevel()
 {
-  if (!m_PendingNextLevel) return;
   m_PendingNextLevel = false;
   
   m_CurrentLevel->Unload();
