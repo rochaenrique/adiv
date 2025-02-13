@@ -7,9 +7,15 @@ namespace adv {
   struct Camera
   {
 	Camera()
-	  : camera{std::make_shared<Camera2D>(Vector2Zero(), Vector2Zero(), 0.0f, 0.5f)}
+	  : camera{std::make_shared<Camera2D>(Vector2Zero(), Vector2Zero(), 0.0f, 1.0f)}
 	{}
+	
+	Camera(size_t width)
+	  : camera{std::make_shared<Camera2D>(Vector2Zero(), Vector2Zero(), 0.0f, 1.0f)}, mapWidth{width}
+	{}
+
   
 	std::shared_ptr<Camera2D> camera;
+	size_t mapWidth;
   };
 }

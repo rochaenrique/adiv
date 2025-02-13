@@ -18,14 +18,18 @@ extern Registry registry;
 void Level::Load()
 {
   Vector2 size = { Window::GetWidth() / m_Map.grid.x, Window::GetHeight() / m_Map.grid.y };
+  m_Camera.mapWidth = size.x * m_Map.width;
+  m_Camera.camera->offset = Window::GetCenter();
 
   Vector2 worldPos = {0, 0};
   for (const Tile& tile : m_Map.tiles) {
 	if (tile.pos.x >= worldPos.x) 
 	  worldPos.x = tile.pos.x;
-	m_Entities.push_back(
-						 Game::CreateTile(m_TileSprite, tile, m_Map.grid, size, adv::Collider(size, true))
-						 );
+	m_Entities.push_back(Game::CreateTile(m_TileSprite,
+										  tile,
+										  m_Map.grid,
+										  size,
+										  adv::Collider(size, true)));
   }
 
   worldPos -= m_Map.playerInitialPos;
@@ -36,7 +40,7 @@ void Level::Load()
 	//EventManager::Get().Emit<CheckPointEvent>();
   });
 
-  //flag should be placed at the end (left most)
+  // flag should be placed at the end (left most)
   Entity flag = Game::CreateTile(m_FlagSprite, Tile{ m_Map.flagPos, 0, 0 }, size, m_Map.grid, flagCollider);
   adv::Animation anim({
 	  {

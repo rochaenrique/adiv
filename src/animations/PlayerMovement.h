@@ -47,7 +47,7 @@ adv::Animation(					            \
 {								            \
   {								            \
 	 .from		= IDLE_INDEX_BEGIN,	        \
-	 .to		= IDLE_INDEX_END,	        \
+	 .to		= IDLE_INDEX_BEGIN,	        \
 	 .duration	= 2.0f			            \
   },							            \
 }								            \

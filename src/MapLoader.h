@@ -16,6 +16,7 @@ struct Map
 {
   Vector2 playerInitialPos, flagPos;
   Vector2 grid;
+  size_t width;
   std::vector<Tile> tiles {};
 };
 

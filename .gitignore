@@ -2,3 +2,4 @@ adiv*
 *.o
 *.dYSM/
 */**/*~
+.DS_store

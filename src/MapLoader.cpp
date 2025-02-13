@@ -35,6 +35,7 @@ std::optional<Map> MapLoader::LoadFile(const std::string& filename)
 
 	Vector2 temp;
 	map.flagPos = { 0, 0 };
+	map.width = 0;
 	for (size_t i = 0; std::getline(file, line); i++) {
 	  auto it = line.begin();
 	  while (it != line.end()) {
@@ -44,6 +45,7 @@ std::optional<Map> MapLoader::LoadFile(const std::string& filename)
 		  map.flagPos.y = i+1;
 		  std::cout << "Found flag pos at: " << map.flagPos << '\n';
 		}
+		if (temp.y > map.width) map.width = temp.y;
 
 		map.tiles.emplace_back(Tile{ { temp.y, (float)i }, 0, (size_t)temp.x }); // temporary
 		
@@ -54,11 +56,14 @@ std::optional<Map> MapLoader::LoadFile(const std::string& filename)
 	file.close();
   }
 
+  map.width++;
+
   std::cout << "Read Map file '" << filename << "':"
 	"\n\tgrid: " << map.grid <<
 	"\n\tplayerPos: " << map.playerInitialPos <<
 	"\n\tflagPos: " << map.flagPos << 
-	"\n\ttiles: " << map.tiles.size() << '\n';
+	"\n\ttiles: " << map.tiles.size() <<
+	"\n\twidth: " << map.width << '\n';
 
   return m_FileToMap[filename] = map;
 }

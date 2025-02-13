@@ -24,7 +24,8 @@
 - [x] 2d Camera
 - [x] Checkpoints
 - [x] Proper collisions with floor
-- [ ] Full basic gameplay with camera updates
+- [x] Camera updates
+- [ ] Full basic gameplay 
 - [ ] Level reset when die
 - [ ] Very basic UI
 - [ ] Player sprite animations

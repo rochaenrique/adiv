@@ -220,7 +220,7 @@ void Game::InitSystems()
 
   m_DrawSystems = {
 	renderSystem,
-	renderCollidersSystem,
+	// renderCollidersSystem,
   };
 }
 
