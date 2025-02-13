@@ -40,3 +40,5 @@
 - ECS System https://austinmorlan.com/posts/entity_component_system/
 - Physics Engine https://winter.dev/articles/physics-engine
 - Old Man Sprite https://www.artstation.com/artwork/d0DxwK
+- Middle Aged Man Sprite https://schwarnhild.itch.io/free-top-down-npc-01-walking-animation-in-4-directions?download
+- Park Assets https://akuarii33.itch.io/simple-park-and-modular-building-assests?download#google_vignette

@@ -67,11 +67,13 @@ void LevelLoader::InitLevels()
 
 bool LevelLoader::NextLevel()
 {
+  std::cout << "Next level!\n";
   (*m_CurrentLevel)->Unload();
   m_CurrentLevel++;
   
   bool res;
   if ((res = (m_CurrentLevel != m_Levels.end()))) {
+	std::cout << "Switching levels now!\n";
 	(*m_CurrentLevel)->Load();
 	EventManager::Get().Flush(EventType::CheckPoint);
   }
@@ -96,7 +98,14 @@ void LevelLoader::LoadTexturePack(std::ifstream& file, Level& level, TextureType
   
   std::getline(file, textureFile);
   std::getline(file, line);
-  level.AddTexturePack(textureFile, adv::ToVector2(line), type);
+  
+  auto it = line.begin();
+  Vector2 grid = adv::ToVector2(it, line.end());
+  float scale = std::stof(std::string(it, line.end()));
+  // std::cout << "Texture:\n\tfile: " << textureFile <<
+  // 	"\n\tgrid: " << grid << "\n\tscale: " << scale << '\n';
+
+  level.AddTexturePack(textureFile, grid, scale, type);
 }
 
 void LevelLoader::LoadTiles(std::ifstream& file, Map& map)
@@ -111,10 +120,7 @@ void LevelLoader::LoadTiles(std::ifstream& file, Map& map)
 	while (it != line.end()) {
 	  temp = adv::ToVector2(it, line.end());
 		
-	  if (temp.y == 0 && i > map.flagPos.y) {
-		map.flagPos.y = i+1;
-		std::cout << "Found flag pos at: " << map.flagPos << '\n';
-	  }
+	  if (temp.y == 0 && i > map.flagPos.y) map.flagPos.y = i+1;
 	  if (temp.y > map.width) map.width = temp.y;
 
 	  map.tiles.emplace_back(Tile{ { temp.y, (float)i }, 0, (size_t)temp.x }); // temporary

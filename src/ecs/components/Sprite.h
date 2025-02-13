@@ -3,6 +3,7 @@
 #include <raymath.h>
 #include <memory>
 #include <cmath>
+#include <cassert>
 
 namespace adv
 {
@@ -10,12 +11,13 @@ namespace adv
   {
   public:
 	Sprite()
-	: m_Texture{nullptr}, m_Grid{0, 0},
+	: m_Texture{nullptr}, m_Grid{0, 0}, m_Scale{1.0f},
 	  m_Source{0, 0, 0, 0}, m_Index{0}
 	{};
-	Sprite(const std::shared_ptr<Texture2D>& t, Vector2 grid, size_t i)
-	  : m_Texture{t}, m_Grid{grid}
+	Sprite(std::shared_ptr<Texture2D> t, Vector2 grid, size_t i, float s)
+	  : m_Grid{grid}, m_Scale{s}
 	{
+	  assert(m_Texture != nullptr && "Invalid btexture"); m_Texture = t;
 	  m_Source = {0, 0, std::floor(t->width / grid.x), std::floor(t->height / grid.y) };
 	  if (IsInRange(i)) {
 		m_Index = i;
@@ -47,7 +49,9 @@ namespace adv
 	  else SetIndex(lb);
 	}
 
-	const std::shared_ptr<Texture2D>& GetTexture() const { return m_Texture; }
+	std::shared_ptr<Texture2D> GetTexture() const { return m_Texture; }
+	Vector2 GetGrid() const {return m_Grid; }
+	float GetScale() const { return m_Scale; }
 	Rectangle GetSource() const { return m_Source; }
 	size_t GetIndex() const { return m_Index; }
 	Vector2 GetSize() const { return { m_Source.width, m_Source.height }; }
@@ -55,6 +59,7 @@ namespace adv
   private:
 	std::shared_ptr<Texture2D> m_Texture;
 	Vector2 m_Grid;
+	float m_Scale;
 	Rectangle m_Source;
 	size_t m_Index;
 

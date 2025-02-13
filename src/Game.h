@@ -18,8 +18,8 @@ public:
 
   bool OnEvent(Event&);
 
-  static Entity CreatePlayer(adv::Sprite, const adv::Camera&, const Vector2, const adv::Animator);
-  static Entity CreateTile(adv::Sprite, Tile, Vector2, Vector2, const adv::Collider&);
+  static Entity CreatePlayer(adv::Sprite, const Vector2, const adv::Camera&, const Vector2, const adv::Animator);
+  static Entity CreateTile(adv::Sprite&, Tile, Vector2, const Vector2, const adv::Collider&);
 
 private:
   float m_DT = 0.0f;

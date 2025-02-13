@@ -78,16 +78,14 @@ bool Game::OnEvent(Event& e)
   return true;
 }
 
-Entity Game::CreatePlayer(adv::Sprite sprite, const adv::Camera& cam, const Vector2 ipos, const adv::Animator animator)
+Entity Game::CreatePlayer(adv::Sprite sprite, const Vector2 size, const adv::Camera& cam, const Vector2 ipos, const adv::Animator animator)
 {
   Entity e = registry.CreateEntity();
-  Vector2 spriteSize = { (float)sprite.GetTexture()->width * .125f, (float)sprite.GetTexture()->height * .125f };
-
   registry.AddComponent(e, adv::Player());
   registry.AddComponent(e, adv::RigidBody(Vector2Zero(), Vector2Zero(),
 										  100.0f, 100.0f, 50.0f, 0.01f, true));
-  registry.AddComponent(e, adv::Transform(ipos, spriteSize * .25f, Vector2Zero()));
-  registry.AddComponent(e, adv::Collider(spriteSize * .25f, false));
+  registry.AddComponent(e, adv::Transform(ipos, size, Vector2Zero()));
+  registry.AddComponent(e, adv::Collider(size, false));
   registry.AddComponent(e, sprite);
   registry.AddComponent(e, cam);
   registry.AddComponent(e, animator);
@@ -95,7 +93,7 @@ Entity Game::CreatePlayer(adv::Sprite sprite, const adv::Camera& cam, const Vect
   return e;
 }
 
-Entity Game::CreateTile(adv::Sprite sprite, Tile tile, Vector2 grid, Vector2 size, const adv::Collider& collider)
+Entity Game::CreateTile(adv::Sprite& sprite, Tile tile, Vector2 grid, const Vector2 size, const adv::Collider& collider)
 {
   Entity e = registry.CreateEntity();
   sprite.SetIndex(tile.spriteIndex);
@@ -108,9 +106,7 @@ Entity Game::CreateTile(adv::Sprite sprite, Tile tile, Vector2 grid, Vector2 siz
   registry.AddComponent(e, sprite);
   registry.AddComponent(e, transform);
   registry.AddComponent(e, collider);
-
-  // std::cout << "Creating tile at:\n\t" << transform <<
-  // 	"\n\tfrom tile: " << tile.pos << ", size: " << size << '\n'; 
+  
   return e;
 }
 

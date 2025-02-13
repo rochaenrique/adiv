@@ -29,12 +29,13 @@ struct TexturePack
 {
   TexturePack() {};
   
-  TexturePack(const std::string& file, Vector2 grid)
-	: filename{file}, grid{grid}
+  TexturePack(const std::string& file, Vector2 grid, float scale)
+	: filename{file}, grid{grid}, scale{scale}
   {};
   
   const std::string filename;
   Vector2 grid;
+  float scale;
   std::shared_ptr<Texture2D> texture = nullptr;
 
   bool IsLoaded() const { return texture != nullptr; };
@@ -51,7 +52,7 @@ public:
   Map& GetMap() { return m_Map; }
   adv::Animator& GetPlayerAnimator() { return m_PlayerAnimator; }
 
-  void AddTexturePack(const std::string&, Vector2, TextureType);
+  void AddTexturePack(const std::string&, Vector2, float, TextureType);
   void LoadTextures();
   void UnloadTextures();
 
