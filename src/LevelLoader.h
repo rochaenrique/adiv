@@ -26,5 +26,9 @@ private:
   
   using LevelsIt = std::vector<std::unique_ptr<Level>>::iterator;
   LevelsIt m_CurrentLevel;
+
+  static void LoadTexturePack(std::ifstream&, Level&, TextureType);
+	static void LoadTiles(std::ifstream&, Map&);
+
 };
 

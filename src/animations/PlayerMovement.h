@@ -1,5 +1,4 @@
 #pragma once
-
 #define WALK_RIGHT_INDEX_BEGIN	0
 #define WALK_RIGHT_INDEX_END	9
 #define WALK_LEFT_INDEX_BEGIN	10

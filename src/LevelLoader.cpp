@@ -38,43 +38,12 @@ void LevelLoader::LoadFile(const std::string& filename)
   std::getline(file, line);
   map.playerInitialPos = adv::ToVector2(line); // player position (from right to left) in grid coords
 
-  std::getline(file, line);
-  std::string textureFile = line;
-  std::getline(file, line);
-  level.AddTexturePack(textureFile, adv::ToVector2(line), TextureType::PLAYER);
-	  
-  std::getline(file, line);
-  textureFile = line;
-  std::getline(file, line);
-  level.AddTexturePack(textureFile, adv::ToVector2(line), TextureType::FLAG);
-	  
-  std::getline(file, line);
-  textureFile = line;
-  std::getline(file, line);
-  level.AddTexturePack(textureFile, adv::ToVector2(line), TextureType::TILE);
+  LoadTexturePack(file, level, TextureType::PLAYER);
+  LoadTexturePack(file, level, TextureType::FLAG);
+  LoadTexturePack(file, level, TextureType::TILE);
 
-  Vector2 temp;
-  map.flagPos = { 0, 0 };
-  map.width = 0;
-  for (size_t i = 0; std::getline(file, line) && line != SEPARATOR; i++) {
-	auto it = line.begin();
-	while (it != line.end()) {
-	  temp = adv::ToVector2(it, line.end());
-		
-	  if (temp.y == 0 && i > map.flagPos.y) {
-		map.flagPos.y = i+1;
-		std::cout << "Found flag pos at: " << map.flagPos << '\n';
-	  }
-	  if (temp.y > map.width) map.width = temp.y;
+  LoadTiles(file, map);
 
-	  map.tiles.emplace_back(Tile{ { temp.y, (float)i }, 0, (size_t)temp.x }); // temporary
-		
-	  if (it == line.end()) break;
-	  it++;
-	}
-  }
-  map.width++;
-  
   std::cout << "Stopped at: " << line << '\n';
   std::cout << "Read Map file '" << filename << "':"
 	"\n\tgrid: " << map.grid <<
@@ -118,3 +87,38 @@ const std::shared_ptr<Camera2D> LevelLoader::GetCamera() const
   return (*m_CurrentLevel)->GetCamera().camera;
 }
 
+void LevelLoader::LoadTexturePack(std::ifstream& file, Level& level, TextureType type)
+{
+  std::string line, textureFile;
+  
+  std::getline(file, textureFile);
+  std::getline(file, line);
+  level.AddTexturePack(textureFile, adv::ToVector2(line), type);
+}
+
+void LevelLoader::LoadTiles(std::ifstream& file, Map& map)
+{
+  map.flagPos = { 0, 0 };
+  map.width = 0;
+  
+  std::string line;
+  Vector2 temp;
+  for (size_t i = 0; std::getline(file, line) && line != SEPARATOR; i++) {
+	auto it = line.begin();
+	while (it != line.end()) {
+	  temp = adv::ToVector2(it, line.end());
+		
+	  if (temp.y == 0 && i > map.flagPos.y) {
+		map.flagPos.y = i+1;
+		std::cout << "Found flag pos at: " << map.flagPos << '\n';
+	  }
+	  if (temp.y > map.width) map.width = temp.y;
+
+	  map.tiles.emplace_back(Tile{ { temp.y, (float)i }, 0, (size_t)temp.x }); // temporary
+		
+	  if (it == line.end()) break;
+	  it++;
+	}
+  }
+  map.width++;
+}
