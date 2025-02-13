@@ -3,7 +3,7 @@
 #include <raylib.h>
 #include "Window.h"
 #include "Level.h"
-#include "MapLoader.h"
+#include "LevelLoader.h"
 #include "ecs/ECS.h"
 #include "ecs/Registry.h"
 #include "ecs/Systems.h"
@@ -26,13 +26,8 @@ private:
   bool m_Running = false;
   
   std::unique_ptr<Window> m_Window;
-  std::unique_ptr<MapLoader> m_MapLoader;
+  std::unique_ptr<LevelLoader> m_LevelLoader;
   
-  std::vector<Level> m_Levels;
-  std::vector<Level>::iterator m_CurrentLevel;
-
-  std::vector<std::shared_ptr<Texture2D>> m_Textures {};
-
   std::vector<std::shared_ptr<System>> m_UpdateSystems;
   std::vector<std::shared_ptr<System>> m_DrawSystems;
 
@@ -41,7 +36,6 @@ private:
   void InitComponents() const;
   void InitSystems();
   void InitLevels();
-  void NextLevel();
   
   void Demo(); // TODO: Remove
 };

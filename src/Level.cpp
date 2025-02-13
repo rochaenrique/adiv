@@ -1,4 +1,5 @@
 #include "Level.h"
+#include <cassert>
 #include <raymath.h>
 #include "Game.h"
 #include "ecs/Registry.h"
@@ -7,29 +8,24 @@
 #include "Event.h"
 #include "EventManager.h"
 
-Level::Level(const Map& map, const adv::Sprite& pSprite, const adv::Sprite& tSprite, const adv::Sprite& fSprite)
-  : m_Map{map},
-	m_PlayerSprite{pSprite}, m_TileSprite{tSprite}, m_FlagSprite{fSprite},
-	m_Camera{adv::Camera()}
+Level::Level()
+  : m_Camera{adv::Camera()}
 {}
 
 extern Registry registry;
 
 void Level::Load()
 {
+  LoadTextures();
+  
   Vector2 size = { Window::GetWidth() / m_Map.grid.x, Window::GetHeight() / m_Map.grid.y };
   m_Camera.mapWidth = size.x * m_Map.width;
   m_Camera.camera->offset = Window::GetCenter();
 
   Vector2 worldPos = {0, 0};
   for (const Tile& tile : m_Map.tiles) {
-	if (tile.pos.x >= worldPos.x) 
-	  worldPos.x = tile.pos.x;
-	m_Entities.push_back(Game::CreateTile(m_TileSprite,
-										  tile,
-										  m_Map.grid,
-										  size,
-										  adv::Collider(size, true)));
+	if (tile.pos.x >= worldPos.x) worldPos.x = tile.pos.x;
+	m_Entities.push_back(Game::CreateTile(m_TileSprite, tile, m_Map.grid, size, adv::Collider(size, true)));
   }
 
   worldPos -= m_Map.playerInitialPos;
@@ -64,3 +60,38 @@ void Level::Unload()
 	registry.DestroyEntity(e);
   m_Entities.clear();
 }
+
+void Level::AddTexturePack(const std::string& file, Vector2 grid, const TextureType type)
+{
+  m_TexturePacks.insert(std::pair(type, TexturePack(file, grid)));
+}
+
+void Level::LoadTextures()
+{
+  std::cout << "Player file: " << m_TexturePacks[TextureType::PLAYER].filename << '\n';
+  std::cout << "Tile file: " << m_TexturePacks[TextureType::FLAG].filename << '\n';
+  
+  for (auto& [type, tp] : m_TexturePacks)
+	if (!tp.IsLoaded())
+	  tp.texture = std::make_shared<Texture2D>(LoadTexture(tp.filename.c_str()));
+
+  assert(m_TexturePacks.size() == 3);
+  const TexturePack& playerTex = m_TexturePacks[TextureType::PLAYER];
+  m_PlayerSprite = adv::Sprite(playerTex.texture, playerTex.grid, 0);
+  
+  const TexturePack& tileTex = m_TexturePacks[TextureType::TILE];
+  m_TileSprite = adv::Sprite(tileTex.texture, tileTex.grid, 0);
+
+  const TexturePack& flagTex = m_TexturePacks[TextureType::FLAG];
+  m_FlagSprite = adv::Sprite(flagTex.texture, flagTex.grid, 0);
+}
+
+void Level::UnloadTextures()
+{
+  for (auto& [type, tp] : m_TexturePacks)
+	if (tp.IsLoaded() && tp.texture.unique()) {
+	  UnloadTexture(*tp.texture);
+	  tp.texture.reset();
+	}
+}
+

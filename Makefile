@@ -43,7 +43,7 @@ build/Window.o \
 build/Game.o \
 build/Level.o \
 build/main.o \
-build/MapLoader.o \
+build/LevelLoader.o \
 build/Helper.o 
 
 $(EXECUTABLE): $(OBJECTS)
@@ -157,7 +157,7 @@ src/ecs/components/Animator.h src/ecs/components/SpriteAnimation.h
 	$(CC) $(FLAGS) $(INCLUDES) -c src/ecs/systems/SpriteAnimationSystem.cpp -o $@
 
 build/Game.o: src/Game.cpp src/Game.h \
-src/Window.h src/MapLoader.h \
+src/Window.h src/LevelLoader.h \
 src/ecs/ECS.h src/ecs/Registry.h src/ecs/managers/SystemManager.h \
 src/ecs/managers/EntityManager.h src/ecs/managers/ComponentManager.h \
 src/ecs/managers/ComponentArray.h src/ecs/Systems.h \
@@ -198,11 +198,13 @@ src/ecs/components/Transform.h src/ecs/components/Camera.h
 build/Window.o: src/Window.cpp src/Window.h 
 	$(CC) $(FLAGS) $(INCLUDES) -c src/Window.cpp -o $@
 
-build/MapLoader.o: src/MapLoader.cpp src/MapLoader.h 
-	$(CC) $(FLAGS) $(INCLUDES) -c src/MapLoader.cpp -o $@
+build/LevelLoader.o: src/LevelLoader.cpp src/LevelLoader.h \
+src/Level.h src/EventManager.h \
+src/ecs/Registry.h
+	$(CC) $(FLAGS) $(INCLUDES) -c src/LevelLoader.cpp -o $@
 
 build/Level.o: src/Level.cpp src/Level.h \
-src/MapLoader.h src/ecs/ECS.h \
+src/LevelLoader.h src/ecs/ECS.h \
 src/Game.h src/ecs/components/Sprite.h \
 src/ecs/Registry.h src/ecs/components/Camera.h \
 src/Window.h src/ecs/components/SpriteAnimation.h \

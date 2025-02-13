@@ -20,11 +20,12 @@
 - [x] Rectangle Collider Detector Implementation
 - [x] Collision Responder
 - [x] General basic player movement
-- [x] Map loader with textures
+- [x] Initial map loader
 - [x] 2d Camera
 - [x] Checkpoints
 - [x] Proper collisions with floor
 - [x] Camera updates
+- [ ] Complete map loader
 - [ ] Full basic gameplay 
 - [ ] Level reset when die
 - [ ] Very basic UI

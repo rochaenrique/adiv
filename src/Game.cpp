@@ -26,26 +26,19 @@ Game::Game(const WindowOptions& wopt)
 	return OnEvent(e);
   });
   
-  m_MapLoader = std::make_unique<MapLoader>("res/maps");
-
-  m_Textures.emplace_back(std::make_shared<Texture2D>(LoadTexture(OLDMAN_PATH)));
-  m_Textures.emplace_back(std::make_shared<Texture2D>(LoadTexture(TILES_PATH)));
-  m_Textures.emplace_back(std::make_shared<Texture2D>(LoadTexture(FLAG_PATH)));
-  
+  m_LevelLoader = std::make_unique<LevelLoader>("res/maps");
   // ECS 
   registry.Init();
   InitComponents();
   InitSystems();
   InitLevels();
-
-  Demo();
 }
 
 void Game::Run()
 {
   m_Running = true;
-  m_CurrentLevel->Load();
-
+  m_LevelLoader->InitLevels();
+  
   while (m_Running && (m_Running = !WindowShouldClose())) {
 	m_DT = GetFrameTime();
 	ClearBackground(SKYBLUE);
@@ -55,10 +48,10 @@ void Game::Run()
 	BeginDrawing();
 	  DrawFPS(0, 0);
 	  BeginBlendMode(BLEND_ALPHA);
-	    BeginMode2D(*m_CurrentLevel->GetCamera().camera);
-		
-	    for (const auto& s : m_DrawSystems)
-	      s->Update(m_DT);
+	    BeginMode2D(*m_LevelLoader->GetCamera());
+	  
+	      for (const auto& s : m_DrawSystems)
+	        s->Update(m_DT);
 		
 	    EndMode2D();
 	  EndBlendMode();
@@ -66,8 +59,10 @@ void Game::Run()
 
 	EventManager::Get().Dispatch();
 
-	if (m_PendingNextLevel) 
-	  NextLevel();
+	if (m_PendingNextLevel) {
+	  m_Running = m_LevelLoader->NextLevel();
+	  m_PendingNextLevel = false;
+	}
   }
 }
 
@@ -124,8 +119,8 @@ Entity Game::CreateTile(adv::Sprite sprite, Tile tile, Vector2 grid, Vector2 siz
   registry.AddComponent(e, transform);
   registry.AddComponent(e, collider);
 
-  std::cout << "Creating tile at:\n\t" << transform <<
-	"\n\tfrom tile: " << tile.pos << ", size: " << size << '\n'; 
+  // std::cout << "Creating tile at:\n\t" << transform <<
+  // 	"\n\tfrom tile: " << tile.pos << ", size: " << size << '\n'; 
   return e;
 }
 
@@ -220,43 +215,14 @@ void Game::InitSystems()
 
   m_DrawSystems = {
 	renderSystem,
-	// renderCollidersSystem,
+	renderCollidersSystem,
   };
 }
 
 void Game::InitLevels()
 {
-  adv::Sprite playerSprite(m_Textures.at(0), { 8, 8 }, 0);
-  adv::Sprite tileSprite(m_Textures.at(1), { 10, 6 }, 0);
-  adv::Sprite flagSprite(m_Textures.at(2), { 5, 1 }, 0);
-
-  m_MapLoader->LoadFile("level1");
-  m_MapLoader->LoadFile("level2");
-  m_Levels.reserve(2);
-  
-  m_Levels.emplace_back(m_MapLoader->GetMap("level1"),
-						playerSprite,
-						tileSprite, 
-						flagSprite);
-  
-  m_Levels.emplace_back(m_MapLoader->GetMap("level2"),
-						playerSprite,
-						tileSprite, 
-						flagSprite);
-
-  m_CurrentLevel = m_Levels.begin();
-}
-
-void Game::NextLevel()
-{
-  m_PendingNextLevel = false;
-  
-  m_CurrentLevel->Unload();
-  
-  if ((m_Running = (++m_CurrentLevel != m_Levels.end()))) 
-	m_CurrentLevel->Load();
-  
-  EventManager::Get().Flush(EventType::CheckPoint);
+  m_LevelLoader->LoadFile("level1");
+  // m_LevelLoader->LoadFile("level2");
 }
 
 void Game::Demo()

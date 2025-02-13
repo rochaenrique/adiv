@@ -1,0 +1,30 @@
+#pragma once
+#include "Level.h"
+#include <filesystem>
+#include <map>
+#include <utility>
+#include <vector>
+#include <optional>
+#include <cassert>
+#include <raylib.h>
+
+class LevelLoader
+{
+public:
+  LevelLoader(const std::string& path);
+
+  void LoadFile(const std::string&);
+
+  void InitLevels();
+  bool NextLevel();
+  const std::unique_ptr<Level>& GetCurrent() const;
+  const std::shared_ptr<Camera2D> GetCamera() const;
+  
+private:
+  const std::filesystem::path m_LevelsPath;
+  std::vector<std::unique_ptr<Level>> m_Levels {};
+  
+  using LevelsIt = std::vector<std::unique_ptr<Level>>::iterator;
+  LevelsIt m_CurrentLevel;
+};
+

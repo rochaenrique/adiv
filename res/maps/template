@@ -1,5 +1,25 @@
-playerPosX playerPosY
 gridX gridY
+playerPosX playerPosY
+playerTextureFile
+playerSpriteGrid
+flagTextureFile
+flagSpriteGrid
+tileTextureFile
+tileSpriteGrid
 line1: tileSpriteIndex tileSpritePosition tileSpriteIndex tileSpritePosition ...
 line2: ...
 ...
+### (divider for animations section)
+walk_right_index_begin
+walk_right_index_end
+walk_right_time
+walk_left_index_begin	
+walk_left_index_end		
+walk_left_time		
+jump_index_begin		
+jump_index_end		    
+jump_time		    
+idle_index_begin		
+idle_index_end			
+idle_time			
+
