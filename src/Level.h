@@ -6,6 +6,7 @@
 #include "ecs/ECS.h"
 #include "ecs/components/Sprite.h"
 #include "ecs/components/Camera.h"
+#include "ecs/components/Animator.h"
 #include <raymath.h>
 
 struct Tile
@@ -47,7 +48,8 @@ public:
   void Load();
   void Unload();
 
-  Map& GetMap() { return m_Map; };
+  Map& GetMap() { return m_Map; }
+  adv::Animator& GetPlayerAnimator() { return m_PlayerAnimator; }
 
   void AddTexturePack(const std::string&, Vector2, TextureType);
   void LoadTextures();
@@ -60,6 +62,7 @@ private:
   adv::Sprite m_PlayerSprite;
   adv::Sprite m_TileSprite;
   adv::Sprite m_FlagSprite;
+  adv::Animator m_PlayerAnimator;
   
   adv::Camera m_Camera;
   std::vector<Entity> m_Entities {};

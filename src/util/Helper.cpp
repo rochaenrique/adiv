@@ -1,6 +1,7 @@
 #include "Helper.h"
 #include <iomanip>
 #include <string>
+#include <iterator>
 
 #define OVERLAP_TH .0001f
 
@@ -90,14 +91,14 @@ namespace adv
 	auto it = s.begin();
 	while (it != s.end() && std::isdigit(*it)) {
 	  v.x = v.x * 10 + (*it - '0');
-	  it++;
+	  it++; ;
 	}
-	it++;
+	it++; 
 	while (it != s.end() && std::isdigit(*it)) {
 	  v.y = v.y * 10 + (*it - '0');
-	  it++;
+	  it++; 
 	}
-
+	
 	return v;
   }
   

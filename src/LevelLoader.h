@@ -1,5 +1,7 @@
 #pragma once
 #include "Level.h"
+#include "util/Helper.h"
+#include "ecs/components/Player.h"
 #include <filesystem>
 #include <map>
 #include <utility>
@@ -7,6 +9,7 @@
 #include <optional>
 #include <cassert>
 #include <raylib.h>
+
 
 class LevelLoader
 {
@@ -28,7 +31,8 @@ private:
   LevelsIt m_CurrentLevel;
 
   static void LoadTexturePack(std::ifstream&, Level&, TextureType);
-	static void LoadTiles(std::ifstream&, Map&);
-
+  static void LoadTiles(std::ifstream&, Map&);
+  static void LoadPlayerAnimator(std::ifstream&, Level&);
+  static adv::Animation LoadPlayerAnimation(std::ifstream&);
 };
 

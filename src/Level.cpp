@@ -29,25 +29,16 @@ void Level::Load()
   }
 
   worldPos -= m_Map.playerInitialPos;
-  m_Entities.push_back(Game::CreatePlayer(m_PlayerSprite, m_Camera, { worldPos.x * size.x, worldPos.y * size.y }));
+  Vector2 playerPos = { worldPos.x * size.x, worldPos.y * size.y };
+  m_Entities.push_back(Game::CreatePlayer(m_PlayerSprite, m_Camera, playerPos, m_PlayerAnimator));
 
-    adv::Collider flagCollider(size, true);
+  adv::Collider flagCollider(size, true);
   flagCollider.SetCollisionCallback([](const adv::Collision&, float) {
 	//EventManager::Get().Emit<CheckPointEvent>();
   });
-
-  // flag should be placed at the end (left most)
   Entity flag = Game::CreateTile(m_FlagSprite, Tile{ m_Map.flagPos, 0, 0 }, size, m_Map.grid, flagCollider);
-  adv::Animation anim({
-	  {
-		.from	  = 0.0f,
-		.to		  = 6.0f,
-		.duration = 1.5f,
-	  }
-	});
-  
   adv::SpriteAnimation animator;
-  animator.Insert(1, anim); 
+  animator.Insert(1, adv::Animation({{ 0.0f, 6.0f, 1.5f }})); 
   animator.ChangeTo(1);
   registry.AddComponent(flag, animator);
 

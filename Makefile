@@ -170,7 +170,7 @@ src/ecs/components/Player.h src/util/Random.h \
 src/Level.h src/ecs/components/Camera.h \
 src/ecs/systems/CameraSystem.h src/ecs/systems/AnimatorSystem.h \
 src/Animation.h src/EventManager.h \
-src/Event.h src/animations/PlayerMovement.h
+src/Event.h 
 	$(CC) $(FLAGS) $(INCLUDES) -c src/Game.cpp -o $@
 
 build/main.o: src/main.cpp src/Game.h \
@@ -200,7 +200,7 @@ build/Window.o: src/Window.cpp src/Window.h
 
 build/LevelLoader.o: src/LevelLoader.cpp src/LevelLoader.h \
 src/Level.h src/EventManager.h \
-src/ecs/Registry.h
+src/ecs/Registry.h src/ecs/components/Animator.h
 	$(CC) $(FLAGS) $(INCLUDES) -c src/LevelLoader.cpp -o $@
 
 build/Level.o: src/Level.cpp src/Level.h \
@@ -208,7 +208,8 @@ src/LevelLoader.h src/ecs/ECS.h \
 src/Game.h src/ecs/components/Sprite.h \
 src/ecs/Registry.h src/ecs/components/Camera.h \
 src/Window.h src/ecs/components/SpriteAnimation.h \
-src/Event.h src/EventManager.h
+src/Event.h src/EventManager.h \
+src/ecs/components/Animator.h src/ecs/components/Player.h
 	$(CC) $(FLAGS) $(INCLUDES) -c src/Level.cpp -o $@
 
 .PHONY : clean

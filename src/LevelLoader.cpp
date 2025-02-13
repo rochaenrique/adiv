@@ -3,8 +3,10 @@
 #include <fstream>
 #include <string>
 #include <cstdio>
-#include "util/Helper.h"
+
 #include "ecs/Registry.h"
+#include "ecs/components/Animator.h"
+
 #include "EventManager.h"
 
 #define SEPARATOR "###"
@@ -25,12 +27,11 @@ void LevelLoader::LoadFile(const std::string& filename)
 	return;
   }
 
-  std::string line;
-  std::ifstream file(m_LevelsPath / filename);
   Level level;
   Map& map = level.GetMap();
 
-  
+  std::ifstream file(m_LevelsPath / filename);
+  std::string line;
   if (!file.is_open()) return;
   std::getline(file, line);
   map.grid = adv::ToVector2(line); // grid to split the screen
@@ -44,7 +45,9 @@ void LevelLoader::LoadFile(const std::string& filename)
 
   LoadTiles(file, map);
 
-  std::cout << "Stopped at: " << line << '\n';
+  // animation
+  LoadPlayerAnimator(file, level);
+  
   std::cout << "Read Map file '" << filename << "':"
 	"\n\tgrid: " << map.grid <<
 	"\n\tplayerPos: " << map.playerInitialPos <<
@@ -121,4 +124,26 @@ void LevelLoader::LoadTiles(std::ifstream& file, Map& map)
 	}
   }
   map.width++;
+}
+
+void LevelLoader::LoadPlayerAnimator(std::ifstream& file, Level& level)
+{
+  adv::Animator& animator = level.GetPlayerAnimator();
+  animator.Insert(adv::PlayerState::WALK_LEFT,	LoadPlayerAnimation(file));
+  animator.Insert(adv::PlayerState::WALK_RIGHT, LoadPlayerAnimation(file));
+  animator.Insert(adv::PlayerState::JUMP,		LoadPlayerAnimation(file));
+  animator.Insert(adv::PlayerState::IDLE,		LoadPlayerAnimation(file));
+  animator.ChangeTo(adv::PlayerState::IDLE);
+}
+
+adv::Animation LevelLoader::LoadPlayerAnimation(std::ifstream& file)
+{
+  std::string line;
+  std::getline(file, line);
+  
+  auto it = line.begin();
+  Vector2 fromTo = adv::ToVector2(it, line.end());
+  float duration = std::stof(std::string(it, line.end()));
+  
+  return adv::Animation({{ fromTo.x, fromTo.y, duration }});
 }

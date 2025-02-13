@@ -8,7 +8,6 @@
 #include "ecs/Components.h"
 #include "util/Random.h"
 #include "util/Helper.h"
-#include "animations/PlayerMovement.h"
 
 #define	SPRITE_DIR  "res/sprites"
 #define OLDMAN_PATH SPRITE_DIR"/old_man.png"
@@ -79,17 +78,10 @@ bool Game::OnEvent(Event& e)
   return true;
 }
 
-Entity Game::CreatePlayer(adv::Sprite sprite, const adv::Camera& cam, const Vector2 ipos)
+Entity Game::CreatePlayer(adv::Sprite sprite, const adv::Camera& cam, const Vector2 ipos, const adv::Animator animator)
 {
   Entity e = registry.CreateEntity();
   Vector2 spriteSize = { (float)sprite.GetTexture()->width * .125f, (float)sprite.GetTexture()->height * .125f };
-
-  adv::Animator animator;
-  animator.Insert(adv::PlayerState::WALK_LEFT, WALK_LEFT_ANIMATION);
-  animator.Insert(adv::PlayerState::WALK_RIGHT, WALK_RIGHT_ANIMATION);
-  animator.Insert(adv::PlayerState::JUMP, JUMP_ANIMATION);
-  animator.Insert(adv::PlayerState::IDLE, IDLE_ANIMATION);
-  animator.ChangeTo(adv::PlayerState::IDLE);
 
   registry.AddComponent(e, adv::Player());
   registry.AddComponent(e, adv::RigidBody(Vector2Zero(), Vector2Zero(),
@@ -99,8 +91,6 @@ Entity Game::CreatePlayer(adv::Sprite sprite, const adv::Camera& cam, const Vect
   registry.AddComponent(e, sprite);
   registry.AddComponent(e, cam);
   registry.AddComponent(e, animator);
-
-  std::cout << "Creating player at:\n\t" << ipos << '\n';
 
   return e;
 }
