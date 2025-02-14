@@ -7,6 +7,7 @@
 #include "ecs/components/Sprite.h"
 #include "ecs/components/Camera.h"
 #include "ecs/components/Animator.h"
+#include "Animation.h"
 #include <raymath.h>
 
 struct Tile
@@ -40,7 +41,6 @@ struct TexturePack
 
   bool IsLoaded() const { return texture != nullptr; };
 };
-
 class Level
 {
 public:
@@ -57,6 +57,9 @@ public:
   void UnloadTextures();
 
   const adv::Camera& GetCamera() const { return m_Camera; }
+  adv::Animation& GetAnimation() { return m_PreAnim; }
+
+  bool IsLoaded() const { return m_Loaded; };
   
 private:
   Map m_Map;
@@ -64,6 +67,8 @@ private:
   adv::Sprite m_TileSprite;
   adv::Sprite m_FlagSprite;
   adv::Animator m_PlayerAnimator;
+  adv::Animation m_PreAnim = adv::Animation({{ 3.0f, 0.0f, 3.0f }});
+  bool m_Loaded = false;
   
   adv::Camera m_Camera;
   std::vector<Entity> m_Entities {};

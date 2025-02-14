@@ -22,14 +22,10 @@ void Level::Load()
   m_Camera.mapWidth = cellSize.x * m_Map.width;
   m_Camera.camera->offset = Window::GetCenter();
 
-  Vector2 worldPos = {0, 0};
-  for (const Tile& tile : m_Map.tiles) {
-	if (tile.pos.x >= worldPos.x) worldPos.x = tile.pos.x;
+  for (const Tile& tile : m_Map.tiles) 
 	m_Entities.push_back(Game::CreateTile(m_TileSprite, tile, m_Map.grid, cellSize, adv::Collider(cellSize, true)));
-  }
 
-  worldPos -= m_Map.playerInitialPos;
-  Vector2 playerPos = { worldPos.x * cellSize.x, worldPos.y * cellSize.y };
+  Vector2 playerPos = { m_Map.playerInitialPos.x * cellSize.x, (m_Map.grid.y - m_Map.playerInitialPos.y) * cellSize.y };
   Vector2 playerSize = m_PlayerSprite.GetSize() * m_PlayerSprite.GetScale();
   m_Entities.push_back(Game::CreatePlayer(m_PlayerSprite, playerSize, m_Camera, playerPos, m_PlayerAnimator));
 
@@ -38,13 +34,15 @@ void Level::Load()
 	EventManager::Get().Emit<CheckPointEvent>();
   });
   Entity flag = Game::CreateTile(m_FlagSprite, Tile{ m_Map.flagPos, 0, 0 }, m_Map.grid, cellSize, flagCollider);
-  
+
   adv::SpriteAnimation animator;
   animator.Insert(1, adv::Animation({{ 0.0f, 6.0f, 1.5f }})); 
   animator.ChangeTo(1);
   registry.AddComponent(flag, animator);
+  m_Entities.push_back(flag);
 
   std::cout << "Loaded " << m_Entities.size() << " entities\n";
+  m_Loaded = true;
 }
 
 void Level::Unload()

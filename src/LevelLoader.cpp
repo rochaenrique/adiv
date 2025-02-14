@@ -36,9 +36,6 @@ void LevelLoader::LoadFile(const std::string& filename)
   std::getline(file, line);
   map.grid = adv::ToVector2(line); // grid to split the screen
 	
-  std::getline(file, line);
-  map.playerInitialPos = adv::ToVector2(line); // player position (from right to left) in grid coords
-
   LoadTexturePack(file, level, TextureType::PLAYER);
   LoadTexturePack(file, level, TextureType::FLAG);
   LoadTexturePack(file, level, TextureType::TILE);
@@ -67,16 +64,27 @@ void LevelLoader::InitLevels()
 
 bool LevelLoader::NextLevel()
 {
-  std::cout << "Next level!\n";
-  (*m_CurrentLevel)->Unload();
-  m_CurrentLevel++;
-  
   bool res;
-  if ((res = (m_CurrentLevel != m_Levels.end()))) {
-	std::cout << "Switching levels now!\n";
-	(*m_CurrentLevel)->Load();
-	EventManager::Get().Flush(EventType::CheckPoint);
-  }
+  static bool reached = false;
+  
+  if (!reached) {
+	std::cout << "Just unloaded level\n";
+	(*m_CurrentLevel)->Unload();
+	m_CurrentLevel++;
+
+	if ((res = (m_CurrentLevel != m_Levels.end()))) {
+	  (*m_CurrentLevel)->Load();
+	  m_FramesTillChange = FRAMES_TO_CHANGE;
+	}
+
+	reached = true;
+  } else if (m_FramesTillChange > 0){
+	m_FramesTillChange--;
+	res = false;
+  } else 
+	res = !(reached = false);
+	
+  EventManager::Get().Flush(EventType::CheckPoint);
   return res;
 }
 
@@ -110,7 +118,9 @@ void LevelLoader::LoadTexturePack(std::ifstream& file, Level& level, TextureType
 
 void LevelLoader::LoadTiles(std::ifstream& file, Map& map)
 {
-  map.flagPos = { 0, 0 };
+  map.flagPos = { 0, -1 };
+  map.playerInitialPos = { 0, -1 };
+
   map.width = 0;
   
   std::string line;
@@ -119,11 +129,13 @@ void LevelLoader::LoadTiles(std::ifstream& file, Map& map)
 	auto it = line.begin();
 	while (it != line.end()) {
 	  temp = adv::ToVector2(it, line.end());
-		
-	  if (temp.y == 0 && i > map.flagPos.y) map.flagPos.y = i+1;
-	  if (temp.y > map.width) map.width = temp.y;
 
-	  map.tiles.emplace_back(Tile{ { temp.y, (float)i }, 0, (size_t)temp.x }); // temporary
+	  if (i > map.flagPos.y) map.flagPos.y = i+1;
+	  if (temp.y > map.width) map.width = temp.y;
+	  if (temp.y >= map.playerInitialPos.x) 
+		map.playerInitialPos = { temp.y, static_cast<float>(i+2) };
+
+	  map.tiles.emplace_back(Tile{ { temp.y, static_cast<float>(i) }, 0, static_cast<size_t>(temp.x) }); // temporary
 		
 	  if (it == line.end()) break;
 	  it++;

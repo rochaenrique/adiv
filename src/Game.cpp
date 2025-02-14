@@ -44,6 +44,9 @@ void Game::Run()
 	for (const auto& s : m_UpdateSystems)
 	  s->Update(m_DT);
 
+	if (IsKeyPressed(KEY_L))
+	  EventManager::Get().Emit<CheckPointEvent>();
+
 	BeginDrawing();
 	  DrawFPS(0, 0);
 	  BeginBlendMode(BLEND_ALPHA);
@@ -58,10 +61,8 @@ void Game::Run()
 
 	EventManager::Get().Dispatch();
 
-	if (m_PendingNextLevel) {
-	  m_Running = m_LevelLoader->NextLevel();
-	  m_PendingNextLevel = false;
-	}
+	if (m_PendingNextLevel) 
+	  m_PendingNextLevel = !m_LevelLoader->NextLevel();
   }
 }
 
@@ -106,7 +107,7 @@ Entity Game::CreateTile(adv::Sprite& sprite, Tile tile, Vector2 grid, const Vect
   registry.AddComponent(e, sprite);
   registry.AddComponent(e, transform);
   registry.AddComponent(e, collider);
-  
+
   return e;
 }
 
@@ -201,14 +202,16 @@ void Game::InitSystems()
 
   m_DrawSystems = {
 	renderSystem,
-	renderCollidersSystem,
+	// renderCollidersSystem,
   };
 }
 
 void Game::InitLevels()
 {
   m_LevelLoader->LoadFile("level1");
-  // m_LevelLoader->LoadFile("level2");
+  m_LevelLoader->LoadFile("level2");
+  m_LevelLoader->LoadFile("level1");
+  m_LevelLoader->LoadFile("level2");
 }
 
 void Game::Demo()

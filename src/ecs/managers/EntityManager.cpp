@@ -13,7 +13,7 @@ Entity EntityManager::Create()
 
   Entity e = m_Available.front();
   m_Available.pop();
-  m_Alive++;
+  ++m_Alive;
   return e;
 }
 
@@ -22,7 +22,7 @@ void EntityManager::Destroy(Entity e)
   assert(e < MAX_ENTITIES && "Entity not created by manager, out of range");
   m_Signatures[e].reset();
   m_Available.push(e);
-  m_Alive--;
+  --m_Alive;
 }
 
 void EntityManager::SetSignature(Entity e, Signature s)
