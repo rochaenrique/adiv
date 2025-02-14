@@ -68,22 +68,21 @@ void Level::LoadTextures()
 	tp.texture = std::make_shared<Texture2D>(LoadTexture(tp.filename.c_str()));
 
   assert(m_TexturePacks.size() == 3);
+  
   TexturePack& playerTex = m_TexturePacks[TextureType::PLAYER];
-  m_PlayerSprite = adv::Sprite(playerTex.texture, playerTex.grid, 0, playerTex.scale);
+  m_PlayerSprite = { playerTex.texture, playerTex.grid, 0, playerTex.scale };
 
   TexturePack& tileTex = m_TexturePacks[TextureType::TILE];
-  m_TileSprite = adv::Sprite(tileTex.texture, tileTex.grid, 0, tileTex.scale);
+  m_TileSprite = { tileTex.texture, tileTex.grid, 0, tileTex.scale };
 
   TexturePack& flagTex = m_TexturePacks[TextureType::FLAG];
-  m_FlagSprite = adv::Sprite(flagTex.texture, flagTex.grid, 0, flagTex.scale);
-
-  std::cout << "Loaded texures nicely\n";
+  m_FlagSprite = { flagTex.texture, flagTex.grid, 0, flagTex.scale };
 }
 
 void Level::UnloadTextures()
 {
   for (auto& [type, tp] : m_TexturePacks) 
-	if (tp.IsLoaded() && tp.texture.unique()) {
+	if (tp.IsLoaded() && tp.texture.use_count() == 1) {
 	  UnloadTexture(*tp.texture);
 	  tp.texture.reset();
 	}

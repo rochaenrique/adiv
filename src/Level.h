@@ -30,13 +30,13 @@ struct TexturePack
   TexturePack() {};
   
   TexturePack(const std::string& file, Vector2 grid, float scale)
-	: filename{file}, grid{grid}, scale{scale}
-  {};
+	: filename{file}, grid{grid}, scale{scale}, texture{nullptr}
+  {}
   
   const std::string filename;
   Vector2 grid;
   float scale;
-  std::shared_ptr<Texture2D> texture = nullptr;
+  std::shared_ptr<Texture2D> texture;
 
   bool IsLoaded() const { return texture != nullptr; };
 };

@@ -14,18 +14,18 @@ namespace adv
 	: m_Texture{nullptr}, m_Grid{0, 0}, m_Scale{1.0f},
 	  m_Source{0, 0, 0, 0}, m_Index{0}
 	{};
+	
 	Sprite(std::shared_ptr<Texture2D> t, Vector2 grid, size_t i, float s)
-	  : m_Grid{grid}, m_Scale{s}
+	  : m_Texture{std::move(t)}, m_Grid{grid}, m_Scale{s}
 	{
-	  assert(m_Texture != nullptr && "Invalid btexture"); m_Texture = t;
-	  m_Source = {0, 0, std::floor(t->width / grid.x), std::floor(t->height / grid.y) };
+	  m_Source = {0, 0, std::floor(m_Texture->width / grid.x), std::floor(m_Texture->height / grid.y) };
 	  if (IsInRange(i)) {
 		m_Index = i;
 		ReCalcSource();
 	  } else 
 		m_Index = 0;
 	}
-
+	
 	bool SetIndex(size_t i)
 	{
 	  if (IsInRange(i)) {
