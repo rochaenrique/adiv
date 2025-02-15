@@ -1,5 +1,6 @@
 CC = g++
-FLAGS = -std=c++23 -g -ggdb -Wall -Wextra -Wno-missing-field-initializers
+# (DEBUG) FLAGS = -std=c++23 -g -ggdb -Wall -Wextra -bWno-missing-field-initializers
+FLAGS = -std=c++23 -g -Ofast -Wall -Wextra -Wno-missing-field-initializers
 SRC_DIR = src
 
 PLATFORM = linux_amd64

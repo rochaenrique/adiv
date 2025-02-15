@@ -48,7 +48,7 @@ void Game::Run()
 	  EventManager::Get().Emit<CheckPointEvent>();
 
 	BeginDrawing();
-	  DrawFPS(0, 0);
+	// DrawFPS(0, 0);
 	  BeginBlendMode(BLEND_ALPHA);
 	    BeginMode2D(*m_LevelLoader->GetCamera());
 	  
@@ -202,7 +202,7 @@ void Game::InitSystems()
 
   m_DrawSystems = {
 	renderSystem,
-	renderCollidersSystem,
+	// renderCollidersSystem,
   };
 }
 

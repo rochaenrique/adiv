@@ -5,7 +5,7 @@
 
 #define V_MV_TOLERANCE  8.0f
 #define V_MULT          1500.0f
-#define H_MULT          200.0f
+#define H_MULT          500.0f
 
 class PlayerSystem : public System
 {
