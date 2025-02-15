@@ -202,7 +202,7 @@ void Game::InitSystems()
 
   m_DrawSystems = {
 	renderSystem,
-	// renderCollidersSystem,
+	renderCollidersSystem,
   };
 }
 
@@ -211,6 +211,8 @@ void Game::InitLevels()
   m_LevelLoader->LoadFile("level0");
   m_LevelLoader->LoadFile("level1");
   m_LevelLoader->LoadFile("level2");
+  m_LevelLoader->LoadFile("level3");
+  m_LevelLoader->LoadFile("level4");
 }
 
 void Game::Demo()
