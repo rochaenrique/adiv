@@ -27,7 +27,7 @@ void LevelLoader::LoadFile(const std::string& filename)
 	return;
   }
 
-  Level level;
+  Level level(filename);
   Map& map = level.GetMap();
 
   std::ifstream file(m_LevelsPath / filename);
@@ -35,7 +35,10 @@ void LevelLoader::LoadFile(const std::string& filename)
   if (!file.is_open()) return;
   std::getline(file, line);
   map.grid = adv::ToVector2(line); // grid to split the screen
-	
+
+  std::getline(file, line);
+  map.flagPos = adv::ToVector2(line); // flag offset
+
   LoadTexturePack(file, level, TextureType::PLAYER);
   LoadTexturePack(file, level, TextureType::FLAG);
   LoadTexturePack(file, level, TextureType::TILE);
@@ -64,25 +67,18 @@ void LevelLoader::InitLevels()
 
 bool LevelLoader::NextLevel()
 {
-  bool res;
   static bool reached = false;
+  bool res = false;
   
   if (!reached) {
 	std::cout << "Just unloaded level\n";
 	(*m_CurrentLevel)->Unload();
 	m_CurrentLevel++;
-
-	if ((res = (m_CurrentLevel != m_Levels.end()))) {
-	  (*m_CurrentLevel)->Load();
-	  m_FramesTillChange = FRAMES_TO_CHANGE;
-	}
-
 	reached = true;
-  } else if (m_FramesTillChange > 0){
-	m_FramesTillChange--;
-	res = false;
-  } else 
-	res = !(reached = false);
+  }
+  
+  if ((res = (*m_CurrentLevel)->AttemptLoad()))
+	reached = false;
 	
   EventManager::Get().Flush(EventType::CheckPoint);
   return res;
@@ -118,7 +114,7 @@ void LevelLoader::LoadTexturePack(std::ifstream& file, Level& level, TextureType
 
 void LevelLoader::LoadTiles(std::ifstream& file, Map& map)
 {
-  map.flagPos = { 0, -1 };
+  Vector2 flagPos = { 0, -1 };
   map.playerInitialPos = { 0, -1 };
 
   map.width = 0;
@@ -142,6 +138,7 @@ void LevelLoader::LoadTiles(std::ifstream& file, Map& map)
 	}
   }
   map.width++;
+  map.flagPos -= flagPos;
 }
 
 void LevelLoader::LoadPlayerAnimator(std::ifstream& file, Level& level)

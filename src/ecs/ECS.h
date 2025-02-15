@@ -4,7 +4,7 @@
 #include <set>
 #include <memory>
 
-#define MAX_ENTITIES   200
+#define MAX_ENTITIES   500
 #define MAX_COMPONENTS 16
 
 using Entity      = std::uint16_t;

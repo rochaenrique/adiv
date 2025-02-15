@@ -5,8 +5,6 @@
 #include "managers/EntityManager.h"
 #include "managers/ComponentManager.h"
 
-
-
 class Registry
 {
 public:

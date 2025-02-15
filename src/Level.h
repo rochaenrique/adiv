@@ -10,6 +10,8 @@
 #include "Animation.h"
 #include <raymath.h>
 
+#define FRAMES_TO_CHANGE 5
+
 struct Tile
 {
   Vector2 pos;
@@ -41,11 +43,13 @@ struct TexturePack
 
   bool IsLoaded() const { return texture != nullptr; };
 };
+
 class Level
 {
 public:
-  Level();
-    
+  Level(const std::string&);
+
+  bool AttemptLoad();
   void Load();
   void Unload();
 
@@ -57,9 +61,6 @@ public:
   void UnloadTextures();
 
   const adv::Camera& GetCamera() const { return m_Camera; }
-  adv::Animation& GetAnimation() { return m_PreAnim; }
-
-  bool IsLoaded() const { return m_Loaded; };
   
 private:
   Map m_Map;
@@ -67,10 +68,10 @@ private:
   adv::Sprite m_TileSprite;
   adv::Sprite m_FlagSprite;
   adv::Animator m_PlayerAnimator;
-  adv::Animation m_PreAnim = adv::Animation({{ 3.0f, 0.0f, 3.0f }});
-  bool m_Loaded = false;
+  size_t m_ChangeCounter = FRAMES_TO_CHANGE;
   
   adv::Camera m_Camera;
+  const std::string m_Name;
   std::vector<Entity> m_Entities {};
   std::unordered_map<TextureType, TexturePack> m_TexturePacks;
 };

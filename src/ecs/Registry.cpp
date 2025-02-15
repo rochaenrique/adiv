@@ -15,7 +15,7 @@ Entity Registry::CreateEntity()
 void Registry::DestroyEntity(Entity e)
 {
   m_EM->Destroy(e);
-  m_SM->Destroy(e);
   m_CM->Destroy(e);
+  m_SM->Destroy(e);
 }
 

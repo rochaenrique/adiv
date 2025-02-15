@@ -10,8 +10,6 @@
 #include <cassert>
 #include <raylib.h>
 
-#define FRAMES_TO_CHANGE 5
-
 class LevelLoader
 {
 public:
@@ -30,7 +28,6 @@ private:
   
   using LevelsIt = std::vector<std::unique_ptr<Level>>::iterator;
   LevelsIt m_CurrentLevel;
-  size_t m_FramesTillChange = FRAMES_TO_CHANGE;
   
   static void LoadTexturePack(std::ifstream&, Level&, TextureType);
   static void LoadTiles(std::ifstream&, Map&);

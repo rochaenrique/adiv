@@ -44,7 +44,7 @@ void Game::Run()
 	for (const auto& s : m_UpdateSystems)
 	  s->Update(m_DT);
 
-	if (IsKeyPressed(KEY_L))
+	if (IsKeyPressed(KEY_L)) 
 	  EventManager::Get().Emit<CheckPointEvent>();
 
 	BeginDrawing();
@@ -208,8 +208,7 @@ void Game::InitSystems()
 
 void Game::InitLevels()
 {
-  m_LevelLoader->LoadFile("level1");
-  m_LevelLoader->LoadFile("level2");
+  m_LevelLoader->LoadFile("level0");
   m_LevelLoader->LoadFile("level1");
   m_LevelLoader->LoadFile("level2");
 }

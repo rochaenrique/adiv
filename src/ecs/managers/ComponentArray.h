@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <cassert>
 #include <optional>
+#include <iostream>
 
 class IComponentArray
 {
@@ -58,12 +59,16 @@ public:
 	return m_Components[m_Entity2Index[e]];
   }
 
-  void Destroy(Entity e)
+  void Destroy(Entity e) override
   {
-	if (m_Entity2Index.find(e) != m_Entity2Index.end())
-	  ComponentArray::Remove(e);
+	if (e == 0) std::cout << "Found e\n";
+	if (m_Entity2Index.find(e) != m_Entity2Index.end()) {
+	  if (e == 0)
+		std::cout << "Removing e\n";
+	  Remove(e);
+	}	  
+	  
   }
-
   
 private:
   std::array<T, MAX_ENTITIES> m_Components {};
