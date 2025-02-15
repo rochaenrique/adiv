@@ -1,6 +1,5 @@
 #pragma once
 
-#include "components/Player.h"
 #include "components/Collider.h"    
 #include "components/Player.h"      
 #include "components/RigidBody.h"   

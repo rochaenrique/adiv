@@ -1,17 +1,15 @@
 #pragma once
-#include "ecs/ECS.h"
 #include <raylib.h>
-#include "Animation.h"
+#include "ecs/ECS.h"
+#include "ecs/components/Player.h"
 
-#define V_MV_TOLERANCE  2.0f
-#define H_MV_TOLERANCE  1.0f
-#define V_MULT          2500.0f
-#define H_NO_JUMP_MULT  300.0f
-#define H_JUMP_MULT     H_NO_JUMP_MULT * .1f
+#define V_MV_TOLERANCE  8.0f
+#define V_MULT          1500.0f
+#define H_MULT          200.0f
 
 class PlayerSystem : public System
 {
 public:
   void Update(float) override;
-  Vector2 CalculateStep(Vector2, Vector2);
+  Vector2 CalculateStep(Vector2, Vector2, bool);
 };

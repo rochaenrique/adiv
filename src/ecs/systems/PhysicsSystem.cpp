@@ -23,7 +23,7 @@ void PhysicsSystem::Update(float dt)
 void PhysicsSystem::StepBody(adv::RigidBody& rb, adv::Transform& t, float dt)
 {
   rb.ApplyAcc(G);
- rb.ResolveForces(dt);
+  rb.ResolveForces(dt);
   t.Displace(rb.GetVelocity() * dt);
   rb.ResetForce();
 }
